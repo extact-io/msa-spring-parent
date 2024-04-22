@@ -1,0 +1,25 @@
+# Workflow - Verify and Deploy to GitHub Packages for All
+name: verify-to-deploy-all-workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip-verify:
+        description: skip verify?
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  verify-all:
+    if: ${{ !inputs.skip-verify }}
+    uses: ./.github/workflows/verify-all-workflow.yml
+    secrets: inherit
+
+  deploy-all:
+    if: ${{ !failure() }}
+    needs: verify-all
+    uses: ./.github/workflows/deploy-all-workflow.yml
+    with:
+      skip-test: true
+    secrets: inherit

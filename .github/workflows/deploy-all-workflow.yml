@@ -1,0 +1,117 @@
+name: deploy-all-workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip-test:
+        description: skip step?
+        required: true
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      skip-test:
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  parent:
+    uses: ./.github/workflows/build-to-repo-job.yml
+    with:
+      repo: extact-io/msa-rms-parent
+      skip-test: ${{ inputs.skip-test }}
+    secrets: inherit
+
+  platform:
+    needs: parent
+    uses: ./.github/workflows/build-to-repo-job.yml
+    with:
+      repo: extact-io/msa-rms-platform
+      skip-test: ${{ inputs.skip-test }}
+    secrets: inherit
+
+  apigateway-build:
+    needs: platform
+    uses: ./.github/workflows/build-to-repo-job.yml
+    with:
+      repo: extact-io/msa-rms-apigateway
+      aws-appname: msa-apigateway
+      skip-test: ${{ inputs.skip-test }}
+      with-image: true
+    secrets: inherit
+  apigateway-deploy:
+    needs: apigateway-build
+    uses: ./.github/workflows/deploy-to-ec2-job.yml
+    with:
+      repo: extact-io/msa-rms-apigateway
+      aws-appname: msa-apigateway
+    secrets: inherit
+
+  service-item-build:
+    needs: platform
+    uses: ./.github/workflows/build-to-repo-job.yml
+    with:
+      repo: extact-io/msa-rms-service-item
+      aws-appname: item-service
+      skip-test: ${{ inputs.skip-test }}
+      with-image: true
+    secrets: inherit
+  service-item-deploy:
+    needs: service-item-build
+    uses: ./.github/workflows/deploy-to-ecs-job.yml
+    with:
+      repo: extact-io/msa-rms-service-item
+      aws-appname: item-service
+      ecs-taskname: item-service-task
+      ecs-containername: item-service-container
+      image-name: extact-io/msa-service-item
+    secrets: inherit
+
+  service-reservation-build:
+    needs: platform
+    uses: ./.github/workflows/build-to-repo-job.yml
+    with:
+      repo: extact-io/msa-rms-service-reservation
+      aws-appname: reservation-service
+      skip-test: ${{ inputs.skip-test }}
+      with-image: true
+    secrets: inherit
+  service-reservation-deploy:
+    needs: service-reservation-build
+    uses: ./.github/workflows/deploy-to-ecs-job.yml
+    with:
+      repo: extact-io/msa-rms-service-reservation
+      aws-appname: reservation-service
+      ecs-taskname: reservation-service-task
+      ecs-containername: reservation-service-container
+      image-name: extact-io/msa-service-reservation
+    secrets: inherit
+
+  service-user-build:
+    needs: platform
+    uses: ./.github/workflows/build-to-repo-job.yml
+    with:
+      repo: extact-io/msa-rms-service-user
+      aws-appname: user-service
+      skip-test: ${{ inputs.skip-test }}
+      with-image: true
+    secrets: inherit
+  service-user-deploy:
+    needs: service-user-build
+    uses: ./.github/workflows/deploy-to-ecs-job.yml
+    with:
+      repo: extact-io/msa-rms-service-user
+      aws-appname: user-service
+      ecs-taskname: user-service-task
+      ecs-containername: user-service-container
+      image-name: extact-io/msa-service-user
+    secrets: inherit
+
+  ui-console:
+    needs: platform
+    uses: ./.github/workflows/build-to-repo-job.yml
+    with:
+      repo: extact-io/msa-rms-ui-console
+      skip-test: ${{ inputs.skip-test }}
+    secrets: inherit

@@ -1,0 +1,12 @@
+# Workflow - build, publish jar GitHub Packages for this repository(msa-rms-parent)
+name: deploy-workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  execute:
+    uses: ./.github/workflows/deploy-job.yml
+    with:
+      repo: ${{ github.repository }}
+    secrets: inherit

@@ -1,0 +1,49 @@
+name: test-build
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: build
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    # install msa-rms-parent for execution prepare
+    - name: prepare execution - checkout msa-rms-parent
+      uses: actions/checkout@v3
+      with:
+        repository: extact-io/msa-rms-parent
+        path: build
+    - name: prepare IMAGE_TAG
+      run: echo "IMAGE_TAG=`git show --format='%H' --no-patch`" >> $GITHUB_ENV
+      #working-directory: msa-rms-parent
+    - name: prepare execution - install msa-rms-parent
+      run: echo ${{ env.IMAGE_TAG }}
+    # install msa-rms-platform for execution prepare
+    - name: prepare execution - checkout msa-rms-platform
+      uses: actions/checkout@v3
+      with:
+        repository: extact-io/msa-rms-platform
+        path: msa-rms-platform
+    - name: prepare execution - install msa-rms-platform
+      run: echo $IMAGE_TAG
+      working-directory: msa-rms-platform
+    # execute verify to target app
+    - name: checkout target app
+      uses: actions/checkout@v3
+      with:
+        repository: extact-io/msa-rms-apigateway
+        path: target-app
+    - name: execute verify
+      run: echo ${{ env.IMAGE_TAG }}
+      working-directory: target-app

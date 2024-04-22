@@ -1,0 +1,27 @@
+name: upload-test
+
+on:
+  workflow_call:
+    inputs:
+      appname:
+        required: true
+        type: string
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: build
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        path: build
+    - name: Output IMAGE_TAG to file
+      run: git show --format='%H' --no-patch > image_tag
+    - name: Upload build Artifact of IMAGE_TAG
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.appname }}
+        path: build/image_tag
+        retention-days: 1

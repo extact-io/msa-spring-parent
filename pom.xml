@@ -1,0 +1,273 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.2.4</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>io.extact</groupId>
+	<artifactId>msa-spring-parent</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>msa-spring-parent</name>
+	<description>Parent POM of Rental Management System By MSA</description>
+
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/extact-io/msa-spring-parent</url>
+		</repository>
+		<snapshotRepository>
+			<id>github</id>
+			<name>GitHub Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/extact-io/msa-spring-parent</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>github</id>
+			<name>GitHub Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/extact-io/msa-spring-parent</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<properties>
+		<!-- environment settings -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+
+		<!-- library versions -->
+		<version.helidon>3.2.1</version.helidon>
+		<version.lib.security-api>2.0.0</version.lib.security-api>
+		<version.lib.jose4j>0.7.12</version.lib.jose4j>
+		<version.lib.auth0jwt>4.2.1</version.lib.auth0jwt>
+		<version.lib.junit-platform>1.8.2</version.lib.junit-platform>
+		<version.lib.assertj>3.23.1</version.lib.assertj>
+		<version.lib.archunit>0.23.1</version.lib.archunit>
+		<version.lib.commons-lang>3.12.0</version.lib.commons-lang>
+		<version.lib.commons-csv>1.9.0</version.lib.commons-csv>
+		<version.lib.lombok>1.18.24</version.lib.lombok>
+		<version.lib.text-io>3.4.1</version.lib.text-io>
+    	<version.plugin.openapi-gen>6.0.0</version.plugin.openapi-gen>
+
+		<!-- maven plugin versions -->
+		<version.plugin.maven-compiler>3.10.1</version.plugin.maven-compiler>
+		<version.plugin.maven-surefire>3.0.0</version.plugin.maven-surefire>
+		<version.plugin.maven-failsafe>3.0.0</version.plugin.maven-failsafe>
+		<version.plugin.maven-jar>3.2.2</version.plugin.maven-jar>
+		<version.plugin.maven-dependency>3.3.0</version.plugin.maven-dependency>
+		<version.plugin.build-helper>3.3.0</version.plugin.build-helper>
+		<version.plugin.jandex>1.1.0</version.plugin.jandex>
+		<version.plugin.helidon-build-tools>2.3.5</version.plugin.helidon-build-tools>
+		<version.plugin.jacoco>0.8.8</version.plugin.jacoco>
+		<version.plugin.docker>0.40.2</version.plugin.docker>
+
+		<!-- docker-maven-plugin setting -->
+		<image.registry>ghcr.io</image.registry>
+		<image.owner>extact-io</image.owner>
+		<image.tag>latest</image.tag>
+		<image.cleanup>try</image.cleanup>
+
+		<!-- sonarcloud setting -->
+		<sonar.projectKey>extact-io_rms</sonar.projectKey>
+		<sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+		<sonar.organization>extact-io</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.test.exclusions>**/*Test.java</sonar.test.exclusions>
+		<sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
+		<sonar.coverage.exclusions>**/io/extact/rms/client/console/**/*</sonar.coverage.exclusions>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../rms-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.extact</groupId>
+				<artifactId>msa-spring-test-lib</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.extact</groupId>
+				<artifactId>msa-spring-platform-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.extact</groupId>
+				<artifactId>msa-spring-platform-fw</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.extact</groupId>
+				<artifactId>msa-spring-platform-fw-test-lib</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.extact</groupId>
+				<artifactId>msa-spring-service-user</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.extact</groupId>
+				<artifactId>msa-spring-service-reservation</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.extact</groupId>
+				<artifactId>msa-spring-service-item</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.helidon</groupId>
+				<artifactId>helidon-dependencies</artifactId>
+				<version>${version.helidon}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.security.enterprise</groupId>
+				<artifactId>jakarta.security.enterprise-api</artifactId>
+				<version>${version.lib.security-api}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.bitbucket.b_c</groupId>
+				<artifactId>jose4j</artifactId>
+				<version>${version.lib.jose4j}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.auth0</groupId>
+				<artifactId>java-jwt</artifactId>
+				<version>${version.lib.auth0jwt}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-core</artifactId>
+				<version>${version.lib.assertj}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tngtech.archunit</groupId>
+				<artifactId>archunit-junit5</artifactId>
+				<version>${version.lib.archunit}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${version.lib.commons-lang}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-csv</artifactId>
+				<version>${version.lib.commons-csv}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${version.lib.lombok}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.beryx</groupId>
+				<artifactId>text-io</artifactId>
+				<version>${version.lib.text-io}</version>
+			</dependency>
+			<!-- WIP https://github.com/eclipse-ee4j/eclipselink/issues/1393 -->
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<version>1.4.200</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<!-- utility libraries(by project) -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<!-- common test libraries -->
+		<dependency>
+			<groupId>io.helidon.microprofile.tests</groupId>
+			<artifactId>helidon-microprofile-tests-junit5</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tngtech.archunit</groupId>
+			<artifactId>archunit-junit5</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- HelidonのBOMのバージョンを強引に上書き -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.10.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<version>5.10.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.10.2</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${version.plugin.jacoco}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>report</id>
+							<phase>test</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>${version.plugin.docker}</version>
+					<configuration>
+						<registry>${image.registry}</registry>
+						<images>
+							<image>
+								<name>${image.owner}/${image.name}</name>
+								<build>
+									<tags>
+										<tag>${image.tag}</tag>
+									</tags>
+									<contextDir>${project.basedir}</contextDir>
+									<cleanup>${image.cleanup}</cleanup>
+								</build>
+							</image>
+						</images>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>
