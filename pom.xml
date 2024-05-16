@@ -198,11 +198,13 @@
 			<version>3.2.1</version>
 			<scope>test</scope>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>com.tngtech.archunit</groupId>
 			<artifactId>archunit-junit5</artifactId>
 			<scope>test</scope>
 		</dependency>
+		-->
 		<!-- HelidonのBOMのバージョンを強引に上書き -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
