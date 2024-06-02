@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.4</version>
+		<version>3.2.6</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.extact</groupId>
@@ -167,20 +167,9 @@
 				<version>${version.lib.commons-csv}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>${version.lib.lombok}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.beryx</groupId>
 				<artifactId>text-io</artifactId>
 				<version>${version.lib.text-io}</version>
-			</dependency>
-			<!-- WIP https://github.com/eclipse-ee4j/eclipselink/issues/1393 -->
-			<dependency>
-				<groupId>com.h2database</groupId>
-				<artifactId>h2</artifactId>
-				<version>1.4.200</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -206,21 +195,6 @@
 		</dependency>
 		-->
 		<!-- HelidonのBOMのバージョンを強引に上書き -->
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<version>5.10.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-params</artifactId>
-			<version>5.10.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.10.2</version>
-		</dependency>
 	</dependencies>
 
 	<build>
