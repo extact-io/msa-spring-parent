@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.5</version>
+		<version>3.4.2</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.extact</groupId>
@@ -44,36 +44,21 @@
 	<properties>
 		<!-- environment settings -->
 		<java.version>21</java.version>
+    	<maven.compiler.release>${java.version}</maven.compiler.release>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.compiler.source>${java.version}</maven.compiler.source>
-		<maven.compiler.target>${java.version}</maven.compiler.target>
-    	<maven.compiler.release>${java.version}</maven.compiler.release>
 
 		<!-- library versions -->
-		<version.helidon>3.2.1</version.helidon>
-		<version.lib.security-api>2.0.0</version.lib.security-api>
-		<version.lib.jose4j>0.7.12</version.lib.jose4j>
-		<version.lib.auth0jwt>4.2.1</version.lib.auth0jwt>
-		<version.lib.junit-platform>1.8.2</version.lib.junit-platform>
-		<version.lib.assertj>3.23.1</version.lib.assertj>
-		<version.lib.archunit>0.23.1</version.lib.archunit>
-		<version.lib.commons-lang>3.12.0</version.lib.commons-lang>
-		<version.lib.commons-csv>1.9.0</version.lib.commons-csv>
-		<version.lib.lombok>1.18.24</version.lib.lombok>
-		<version.lib.logback-access>2.0.4</version.lib.logback-access>
+		<version.lib.jose4j>0.9.6</version.lib.jose4j>
+		<version.lib.auth0jwt>4.5.0</version.lib.auth0jwt>
+		<version.lib.assertj>3.27.3</version.lib.assertj>
+		<version.lib.archunit>1.4.0</version.lib.archunit>
+		<version.lib.commons-lang>3.17.0</version.lib.commons-lang>
+		<version.lib.commons-csv>1.13.0</version.lib.commons-csv>
+		<version.lib.logback-access>2.0.6</version.lib.logback-access>
 		<version.lib.text-io>3.4.1</version.lib.text-io>
-    	<version.plugin.openapi-gen>6.0.0</version.plugin.openapi-gen>
 
 		<!-- maven plugin versions -->
-		<version.plugin.maven-compiler>3.10.1</version.plugin.maven-compiler>
-		<version.plugin.maven-surefire>3.0.0</version.plugin.maven-surefire>
-		<version.plugin.maven-failsafe>3.0.0</version.plugin.maven-failsafe>
-		<version.plugin.maven-jar>3.2.2</version.plugin.maven-jar>
-		<version.plugin.maven-dependency>3.3.0</version.plugin.maven-dependency>
-		<version.plugin.build-helper>3.3.0</version.plugin.build-helper>
-		<version.plugin.jandex>1.1.0</version.plugin.jandex>
-		<version.plugin.helidon-build-tools>2.3.5</version.plugin.helidon-build-tools>
 		<version.plugin.jacoco>0.8.12</version.plugin.jacoco>
 		<version.plugin.docker>0.40.2</version.plugin.docker>
 
@@ -113,49 +98,8 @@
 			</dependency>
 			<dependency>
 				<groupId>io.extact</groupId>
-				<artifactId>msa-spring-platform-fw-test-lib</artifactId>
+				<artifactId>msa-spring-rms-application</artifactId>
 				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.extact</groupId>
-				<artifactId>msa-spring-service-user</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.extact</groupId>
-				<artifactId>msa-spring-service-reservation</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.extact</groupId>
-				<artifactId>msa-spring-service-item</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>jakarta.security.enterprise</groupId>
-				<artifactId>jakarta.security.enterprise-api</artifactId>
-				<version>${version.lib.security-api}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.bitbucket.b_c</groupId>
-				<artifactId>jose4j</artifactId>
-				<version>${version.lib.jose4j}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.auth0</groupId>
-				<artifactId>java-jwt</artifactId>
-				<version>${version.lib.auth0jwt}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.assertj</groupId>
-				<artifactId>assertj-core</artifactId>
-				<version>${version.lib.assertj}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.tngtech.archunit</groupId>
-				<artifactId>archunit-junit5</artifactId>
-				<version>${version.lib.archunit}</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -177,30 +121,35 @@
 				<artifactId>logback-access-tomcat</artifactId>
 				<version>${version.lib.logback-access}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.bitbucket.b_c</groupId>
+				<artifactId>jose4j</artifactId>
+				<version>${version.lib.jose4j}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.auth0</groupId>
+				<artifactId>java-jwt</artifactId>
+				<version>${version.lib.auth0jwt}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-core</artifactId>
+				<version>${version.lib.assertj}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tngtech.archunit</groupId>
+				<artifactId>archunit-junit5</artifactId>
+				<version>${version.lib.archunit}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
-		<!-- utility libraries(by project) -->
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
 		</dependency>
-		<!-- common test libraries -->
-		<dependency>
-			<groupId>io.helidon.microprofile.tests</groupId>
-			<artifactId>helidon-microprofile-tests-junit5</artifactId>
-			<version>3.2.1</version>
-			<scope>test</scope>
-		</dependency>
-		<!--
-		<dependency>
-			<groupId>com.tngtech.archunit</groupId>
-			<artifactId>archunit-junit5</artifactId>
-			<scope>test</scope>
-		</dependency>
-		-->
-		<!-- HelidonのBOMのバージョンを強引に上書き -->
 	</dependencies>
 
 	<build>
