@@ -1,0 +1,539 @@
+Maven4
+■ 直近TODO
+・ItemとUserを削除したときの予約のチェック
+・masterのリモート実装
+
+===> Done
+・pomの整理・整頓(dependencyとか)
+・ライブラリの最新化
+・ModelUpdaterとかにして今フィールド名で渡してるのをsetterのメソッド参照を渡してもいいかも。setterはLombokでprivateで作ればいいし
+    → べたなapplyName作戦の方が良い気がしてきた。modelでリフレクション使うと参照が追えなくなるしなぁ
+・Daoのvalidatedを削除
+・ArchUnit
+・推移的にも問題ないかの検証はapplication→ fw → coreの三段論法で検証すればモジュールを分けなくてもOK
+・// validator().validateField(test, test::getNote); ← 文字列渡す代わりにメソッド参照を渡して向こう側でプロパティ名に変更してもいい気が
+
+・ClientとServerのLocalDateTimeのフォーマットカスタム
+    Server側は
+        @PathVariableと@RequestParamに対するフォーマットは以下の設定変更可能
+            spring.mvc.format.date
+            spring.mvc.format.time
+            spring.mvc.format.date-time
+
+        RestClientのフォーマットはRestClientを生で使うときはUriBuilderFactoryが使われ
+        HttpInterface経由で使う場合は、@PathVariableと@RequestParamのすべてフォーマットはHttpServiceProxyFactory#conversionServiceが使われる
+            --------
+            UriBuilderFactory uriFactory = customUriBuilderFactory(env);
+            ConversionService conversionService = customConversionService();
+
+            RestClient restClient = RestClient.builder()
+                    .uriBuilderFactory(uriFactory)
+                    ..
+                    .build();
+
+            RestClientAdapter adapter = RestClientAdapter.create(restClient);
+            HttpServiceProxyFactory factory = HttpServiceProxyFactory
+                    .builderFor(adapter)
+                    .conversionService(conversionService)
+                    .build();
+            --------
+
+        DefaultFormattingConversionService
+            Springのデフォルトのコンバーターが設定されたConversionService
+            DefaultFormattingConversionService#addConverter()で追加された順でConverterが上書きされていく
+            Converterは変換前の型(sourceType)と変換後の型(targetType)の組み合わせを持っており、この情報を型変換に利用するConverterが検索・決定される
+
+■ BeanValidation
+・ネストプロパティのConstraintsのアノテーションは静的に到達可能な定義にする
+・BeanValidationはフィールドではなくgetterの定義を優先するため、Constraintsが取得できなく、結果バリデーションが掛からなくなる場合がある
+・例えば次のクラスに対する"id.id"プロパティに対するバリデーション実行が指定された場合、Identityにgetterがあるため、Constraintsが
+  testModel.id.Identity#getId()で辿られ、Identity#getId()にはConstrainsがないためチェックなしとなる。
+・BeanValidationはgetterにConstrainsがなければ対応するフィールドの定義を見ていってくれるが、Identityはインタフェースなのでそれもなしとなる。
+    ⇒ なぜかEclipseの実装ではConstrainsが見つからないが、まったく同じコードをF11のデバックで実行するとConstraitsが見つかって期待通りに動く
+       場合があるが、基本的にクラスのメタ情報のキャッシュかなにかの副作用で不安になるので「静的に到達可能な定義にする」が大原則となる
+    static class TestModel {
+        private Identity id; // getterはなし
+    ...
+    static record TestModelId(
+            @RmsId
+            int id) implements Identity {
+    ...
+    public interface Identity {
+        int id();
+        default int getId() {
+            return this.id();
+        }
+    ...
+・「静的に到達可能な定義にする」ために気を付けるべきこと
+    - getterが優先されるので、getterにフィールド定義とは異なる型を付けている場合は注意する
+    - getterにConstraintsがない場合、プロパティ名と同名のフィールドのConstraintsが確認される。
+      よって、getter名と異なるフィールド名にConstraintsを付けている場合は注意する
+
+・Validationかけるのはgetterがなくてハマる可能性があるのでrecordではなく@Valueにした方が無難な気がする
+
+
+
+https://speakerdeck.com/hirotokirimaru/testing-example-for-a-rest-api-created-with-spring-boot
+
+■ @NonNullを使うと@Generatedがメソッドに付けれてカバレッジの対象外になってしまう
+⇒@NonNullは副作用が大きいので使わない方がいいかなぁ・・
+    注意: v1.18.34 以降、lombok はこのアノテーションをデフォルトで追加します。それ以前は、lombok 構成キーを追加する必要がありました。
+    オプトアウトしたい場合（推奨されません）、lombok.addLombokGeneratedAnnotation = falseに 追加できますlombok.config。
+
+■テストクラスにおけるConfigurationクラスの扱い
+・ライブラリプロジェクトのように@SpringBootApplicationがない場合はコンポーネントスキャンが走ることはないので、
+  テストクラスで@Configurationを使っても他のテストクラスから参照されることはなく問題なく使うことができる。
+  またコンテキストを自クラスに限定でき不要なコンポーネントが読み込まれずテストの独立性が高まるため@Configurationを使う
+・アプリプロジェクトのように@SpringBootApplicationがある場合は、@Configurationを使うと@SpringBootTestで
+  @SpringBootApplicationがスキャンされるとコンポーネントスキャンにより他のテストクラスの@Configurationが読み込まれてし
+  まうためテストクラスで@Configurationを使うのは基本的に厳禁で、スキャン対象にならない@TestConfigurationを使うこと
+  また、@SpringBootTestのclassesに@TestConfigurationを指定しても@TestConfigurationは起動コンテキストとは扱われない。
+  @SpringBootApplicationがスキャンを回避したい場合は、classesに合わせて何らかのComponetを指定する必要がある
+
+■valiationポリシー
+・外界からの入口と出口で行う
+    → 教科書的にはCommadでもやったほうがいいとなっているが、web以外からは前提としてないので現在ではやる必要がないためやっていない
+    → 出口はRepositoryの境界で担保しているので、JPAのEntityではやらない。そもそもFileではできないし
+
+■Configの作成ポリシー
+・最上位パッケージにコンフィグを1つにまとめたクラスを作るのではなく、各レイヤーパッケージごとに作成する
+    → 1つにまとめるレイヤごとの単体テストをするときに他のレイヤのBean生成が邪魔になったりして単独で使えなくなるため
+    理由：
+        ・Springへの依存を極力減らす（EventListenerなど避けられないものもあるので、禁止する訳ではない）
+        ・実行時にコンテキストに登録されるコンポーネントの把握と制御
+            ⇒ 「手を動かして分かる クリーンアーキテクチャ」の10.4 Java Configの説明のとおり
+
+
+shinnosuke0522/spring-oidc-handson: Project to learn OIDC with Keycloak
+https://github.com/shinnosuke0522/spring-oidc-handson
+
+■ modelSupport.setPropertyWithValidation("name", newName); vs ベタベタバリデーション
+・DomainModelでフィールドの参照先が参照先検索で把握できないのは保守ではかなり致命的
+・なので、Reflectionを使えば1行でできるがあえて冗長な代入コードにする
+
+---
+■ DDD化のTODO
+・実装がそこそこ落ち着いたら↓のをfwからapplicationに移動する
+    DateTimePeriod
+    UserType
+    BeanValidationのコンポーネント
+
+・domianとapplicaitonはSpringに依存しないようにする
+    ⇒ @Serviceとは使わず、mainのApplicaitonのところでConfigurationするようにしよう
+
+・ユーザ付随的なものの使いどころとして更新・追加のタイムスタンプを付けておく
+・ItemとUserが削除されたらイベントを発火させる
+・開始日時と終了日時は値オブジェクトのしがいがあるところなので値オブジェクトに変更する！
+・OpneAPIで定義
+・validationをtypeをcomponet-bizに独立させて持っていく？
+・LoginIdと会員種別をユーザ付随情報な感じで持てるようにする
+・Configの整理
+    アプリからみた可変部分をMicroProfileのときのように外に出しにしておく
+        ・private-key: classpath:/jwt.key←とか
+
+---
+・uiとwebを入れいる。infrastructureにはjpa,file, remote(インメモリ)の3つにして、ほんとの丸を囲ったオニオンにしよう！
+    ⇒ リモートは簡単なインメモリにしよう！分散トレースや認証情報の引き渡し、例外ハンドリング(重複チェックくらいでいいか)とかそこら辺がやりたいだけだったので
+       ビジネスロジック的なものは最低限なものにしよう
+
+■ アプリケーション層の理解
+・ドメインを使ってユースケースの処理を実現する層
+
+■ DDDって
+・ドメインをUserCase層で囲って防御し、それぞれのイベントの内容をコマンドで明確にすることで、手間はかかるが
+  どのイベントでどこがなにが更新されるのかという更新範囲が明確になってとても良い気がした。
+  これは最初は丸っとCRUDアプリっぽく作ったので、管理機能の更新っでどのフィールドが更新できるんだっけ？というのがコードからは
+  わからず、画面を見ないと分からなかったのが分かるようになった。これがコードで業務を表すってことの1つなんだろうなぁと
+  ただ、これはDDDなのか？それともオニオンの効能のどっちなのかは分かっていないｗ
+
+
+mas-spring-rsm-application  ←ドメイン知識あり
+mas-spring-user-master      ← なにも考えずCRUDを行うマスターサービス。よってドメイン知識なし
+mas-spring-item-master
+mas-spring-reservation-master
+
+■ ApplicationServiceって？
+・ユースケースコントローラーだな
+・ユースケースはユーザとシステムとの一連のやり取りをまとめたもの
+・ということはユースケースシナリオに現れるシステムに対する操作をクラスにまとめたものがユースケースコントローラになるハズ
+
+・ユースケースコントローラ
+    UserAccountManagementUseCase
+    LoginUseCase
+    RentalItemManagementUseCase
+
+    ReservationUseCase レンタル品を予約するユースケース
+    
+    
+    domain
+    infrastracture
+    usecase
+    webapi
+
+■ 命名ルール
+・原則として具体的なアクションは動詞＋対象（例: ReserveXxxService, CancelXxxService）に統一。
+・例外的に管理対象のユースケースは名詞ベース（例: XxxManagementService）に統一。
+
+■ 命名ルール
+・原則として具体的なアクションは動詞＋対象（例: ReserveXxxService, CancelXxxService）に統一。
+・例外的に管理対象のユースケースは名詞ベース（例: XxxManagementService）に統一。
+
+
+※アクターで分けるのはいい気がしてきた
+例）
+■ 共通
+- ユーザプロファイルを更新する
+    - UserProfileService
+        - 自分のプロファイルを取得する
+        - 自分のプロファイルを更新する
+- ログインする
+    - AuthenticationService
+        - ログインする
+
+■ 管理
+- ユーザを管理する
+    - UserManagementService
+        - ユーザを全件取得する
+        - ユーザを1件取得する
+        - ユーザを更新する
+        - ユーザを登録する
+        - ユーザを削除する
+- 予約を管理する
+    - ReservationManagementService
+        → ユーザ管理と同じ
+- レンタル品を管理する
+    - RentalItemManagemnetService
+        → ユーザ管理と同じ
+
+■ メンバー
+- 予約サービスを利用する
+    - ReservationMemberService
+        ⇒ Memberが利用可能なサービスのすべて
+
+
+@ApplicationServiceと@DomainServiceの2つは作ってつける
+    → 名前からだけではわからないのとサービスといっても２つあるのでそれを明示するため
+
+UserAccount
+    - id
+    - loginId
+    - password
+    - userType
+    -----
+    + changePassword
+    + switchUserType
+        userTypeは管理者しか変更できない
+
+UserProfile
+    - name
+    ...
+    -----
+    editProfile
+
+AuthenticationService
+
+## ユーザアカウントとユーザプロファイルの関係
+- ユーザプロファイルはユーザアカウントを使っている人がどんな人なのかを補足する情報いなります
+- ユーザアカウントが作成されるときは必ずユーザプロファイルの情報も登録されます
+- ユーザアカウントを削除するとユーザプロファイルの情報も削除されます
+- 作成済みのユーザプロファイルの情報を登録時とは別のユーザアカウントに付け替えることはありません
+- ユーザアカウントの情報とユーザプロファイルの情報は同一トランザクションでまとめて更新される場合もありますが、それぞれ個別に更新される場合もあります
+
+ーーーーー
+アーキテクチャ決定
+ーーーーー
+■ Viewインタフェースの導出
+・interface層からDomainクラスへの参照はモデル変換を不要とするため許容しているがDomainクラスの状態を変更する操作は制限したいため、このインタフェースを設けいている。
+・よって、interface層からDomainクラス本体への参照は禁止とする。
+    ⇒ 補足：Port and Adapterは外部からはportに配置した要素への依存しか許容しない。よって、外部にモデルを公開する際は必ずモデル変換が必要となる。
+             今回はアーキテクチャ決定はオニオンアーキテクチャが前提のため許容されるが、厳格なPort and Adapterアーキテクチャでは許容されないことは理解しておく必要
+             がある。
+
+■ interface層からの依存を許容するDomain要素
+・Domain層にはアプリケーションの状態を変更する操作が含まれるためinterface層の依存は必要最低限にすることが好ましい。
+・これを踏まえReferenceModelと値オブジェクト、ValidationのConstraintの3つはinterface層からの参照は許容する
+・これらはいずれも副作用がなく、参照することによるデメリットは層を飛ばした参照の統制的な観点しかなく、参照させないことの合理性に欠けるため。
+
+■ RequestとResponseとして外部に公開可能とする要素
+・外部に公開して良いのはJava標準クラスおよびinterfaces層で定義したクラスのみ
+・interfaces層から一部のDomainクラスに依存することは許容しているが、これを外部に直接公開するのはNG。
+・外部との入出力にDomainクラスを利用した場合、外部からのリクエストやレスポンその変更影響を直接ドメインで受けることになるため、絶対に禁止
+
+■ RequestとResponseのデータ構造の共通化は行わない
+・例えば、aminとmemberには構造が全く同じItemのResponseクラスが存在するように外部インタフェースを司るレイヤでは機能間で同じまたはほぼ同じとなるデータ構造
+  クラスが複数存在することがあるが、これに対しては共通化か行わず、あえて重複さておく。
+・各機能は他の機能に関係なく、必要とするデータが変わる可能性は多分にある。各機能で利用するRequestとResponseを共通化してしまった場合、他の機能の入出力の
+  変更が本来は全く関係ない他の機能に及ぶことになる。よって、機能間の重複はたままた現時点では同じだけと割り切り、共通化はしないこと。
+・これはControllerクラスにも同じことが言える。Controller間で重複する手順を共通化したい場合、それを制限することはしないが、継承による共通化は行わず委譲で行うこと
+
+
+■ ApplicationServiceからの入出力クラス
+・入力はDomainモデルは使わず、Commandクラスを設け、モデル変換を行う。これはモデルの登録時の内容や更新範囲をコードで明確にする目的がある
+・出力はDomainモデル(ReferenceModel)で返す。参照の場合、モデル変換を行っても同じモデルとなることが大多数となる。デメリットの更新系操作の公開は
+  ReferenceModelを使うことで対処済みのため、実質的なデメリットはない。
+・よってモデル変換を行わなくても可としている。（当然必要に応じてモデル変換を行うのは可で常にDomainモデルを返すことを制約するものではない
+
+■ persistenceのサブパッケージ
+・サブパッケージをfile,jpaといった方式で分けるか？それともitem, reservatioといったドメインで分けるかの選択があるが、永続化パッケージであることから主たる関心は
+  方式となるため、方式で分けている
+・fileやjpaなどの方式の下をさらにitem, reservationといった業務ごとに分ける選択肢もあるが、JPAのEntityScanはパッケージ単位でしか指定できない。
+・業務ごとにパッケージを分けない場合、アプリケーション内のすべてのエンティティをScanするか/しないか？の単位でしか制御できなくなる。
+・itemはjpaにするがreservationはfileにした場合でも不要なItemEntityがスキャンされることになる。
+・これを防ぐため、方式の下は業務(集約)ごとにパッケージを切り、Scan対象を細かく制御できるようにする
+
+---
+直近TODO
+---
+・動くようにする
+
+---
+今後のTODO
+---
+・Customizerを使う
+    → WebSecurityCustomizerとかRestClientCustomizerとか
+・ServiceConnectionを使ってみる
+・BusinessDateを作ってもいいかも←業務日付のだな
+・makingさんのを参考にCustomizerを深掘りしてみる
+・BuildpacksでCDSを使ってみる
+・JWT認証の後にログイン情報をRedisを使って復元する
+・OAuth2（auth0とkeycloakを使ってみる）
+・ClientHttpRequestとClientHttpResponseをクルクル回してFactoryを1つでいいようにする
+    → CustomizableClientRequestのところ
+・fileもSpringのclasspath:を使えるようにする
+・キャッチアップ
+    Spring Boot 3.4.0-RC1 が利用可能になりました
+    https://spring.io/blog/2024/10/26/spring-boot-3-4-0-rc1-available-now
+
+・機能を追加
+    - レンタル品に管理部門を追加し管理部門に所属する管理者しか削除できないようにする
+
+---
+ddd-by-examples/library: A comprehensive Domain-Driven Design example with problem space strategic analysis and various tactical patterns.
+https://github.com/ddd-by-examples/library
+
+ttulka/ddd-example-ecommerce: Domain-driven design example in Java with Spring framework
+https://github.com/ttulka/ddd-example-ecommerce/tree/main
+
+VaughnVernon/IDDD_Samples: These are the sample Bounded Contexts from the book "Implementing Domain-Driven Design" by Vaughn Vernon: http://vaughnvernon.co/?page_id=168
+https://github.com/VaughnVernon/IDDD_Samples/tree/master
+
+thombergs/buckpal: An example approach for implementing a Clean/Hexagonal Architecture
+https://github.com/thombergs/buckpal/tree/master
+
+nrslib/itddd
+https://github.com/nrslib/itddd
+---
+
+system-sekkei/isolating-the-domain: architecture sample using : Spring Boot gradle, Spring MVC, Thymeleaf, and MyBatis
+https://github.com/system-sekkei/isolating-the-domain
+
+little-hands/ddd-sample-code
+https://github.com/little-hands/ddd-sample-code/tree/main
+
+
+データベースの初期化 :: Spring Boot - リファレンス
+https://spring.pleiades.io/spring-boot/how-to/data-initialization.html
+
+データアクセス :: Spring Boot - リファレンスドキュメント - カスタムDataSource
+https://spring.pleiades.io/spring-boot/how-to/data-access.html
+
+SQL データベース :: Spring Boot - リファレンス - JPA AND Spring Data
+https://spring.pleiades.io/spring-boot/reference/data/sql.html#data.sql.jpa-and-spring-data
+
+SQL データベース :: Spring Boot - リファレンス - DataSource
+https://spring.pleiades.io/spring-boot/reference/data/sql.html#data.sql.datasource
+
+SpringBootのテストスライスアノテーションについて #Java - Qiita
+https://qiita.com/nannany_stores/items/94f0d1bf0eca77c4d4f7
+
+Test Slices :: Spring Boot
+https://docs.spring.io/spring-boot/appendix/test-auto-configuration/slices.html#appendix.test-auto-configuration.slices
+
+急がば回れで↓の記事でも書いておくか。いっつも忘れるので
+    SpringのBenaValidationのエラーメッセージ備忘録
+    ・・ハマる：構造
+        {message.test.}の{}はいるよ
+        "苗字と名前は合計{min}文字から{max}文字で入力してください。"など{}がないと変換しない
+        プレースホルダ{max}と{0}
+        MessaeSourceのbean名はmessageSourceじゃないとダメ
+
+CI:
+    コンパイル
+    ユニットテスト(JUnitテスト-Mockありテスト/SpringBootApplicationの両方)⇒ローカル＆CI環境で実行　※道具立てはできるだけ合わせる
+    ビルド(イメージビルド)
+    コンテナリポジトリにdeploy(push)
+CD(継続的デリバリー) ※検証環境へのデプロイからテストまで
+    (環境構築-IaC)
+    コンテナデプロイ
+    APIテスト or E2Eテスト
+    (環境破棄-IaC)
+ーーーー
+『JavaでAWSで動作させるコンテナアプリを作っています。CIパイプラインを考えていますが、AWS環境へデプロイした自動テストは一般的にCIパイプラインで行うものでしょうか？それともCDパイプラインで行うべきものでしょうか？』
+とChatGPTに聞いても同じだったのでこれで良し！
+
+
+・Postgresを使ってTestContainerでやってみよう
+・ヘキサゴナルでやってみよう！
+
+・msa-rms-ui-consoleのログイン処理
+    LoginServerProxy#authenticateのところで
+        RestClientからJWTヘッダを取得して
+        SecurityContextにセットするようにしよう！
+
+
+・Lombokを使っているところをRecordクラスに変えられないか試してみる
+
+■デベロッパーサイトネタ
+・JUnitでオレオレコンディションを作る
+・実装に依存せずLogging設定を動的に変更する！
+
+・BeanValidationとMessageSourceの関係
+・メソッドバリデーションのアノテーション指定
+
+・RestClientのテストをRAMDOM_PORTでやりたい！
+・インターフェースは被せましょう。インターフェースだからといってそのまま出すのはダメ
+
+
+・6.0以降でAnonymousAuthenticationTokenを拡張してみる
+・6.0以降でAbstractOAuth2TokenAuthenticationToken<Jwt>を拡張してみる
+・6.0以降で独自のSecurityFilterChainを追加してみる
+---
+・ConfigurationPropertiesにRecordを使ってみる
+・Boot 3.3にしたらlogback accessが動かなくなった
+
+
+■TODO
+fwが一旦動くようになったらcoreにrestclientのCustomizableを持って行って
+・handlerの仕組みと共通処理としてヘッダのログ出力実装を入れてみよう
+
+■ PetClinic
+https://github.com/spring-petclinic/spring-petclinic-microservices
+
+■Step
+・不要なのはドンドン削除する
+・springの親pomを追加して既存コードはとりあえずコンパイルは通るようにしておく
+・どんどん置き換えていく
+
+・ある程度できたら、消したもので、ホントに要らなかったかをもとと比べてみる
+----
+共通的な設定をconfig.importで共通化する→記述順なので、アプリで上書きする
+
+
+HttpSecurity
+    public HttpSecurity anonymous(Customizer<AnonymousConfigurer<HttpSecurity>> anonymousCustomizer) throws Exception {
+
+
+AnonymousConfigurer
+    public void init(H http) {
+        http.authenticationProvider(this.authenticationProvider);
+        
+----------
+■ Validationでステップ実行で見てみるといいところ
+SpringValidatorAdapter#processConstraintViolations
+RequestResponseBodyMethodProcessor#resolveArgument
+AbstractValidationContext#addConstraintFailure
+
+MessageSourceResolvable#getArgumentsの0番目はエラーとなったフィールド
+仕様根拠は↓参照
+https://terasolunaorg.github.io/guideline/current/ja/ArchitectureInDetail/WebApplicationDetail/Validation.html#application-messages-properties
+
+
+↓★BeanValidationでできることやってくれることはここまで、以下のSpringの機能を使って自分で解決するの切り口で整理するといいかも↓
+★BeanValidationは↓のようにconstraintに定義された本文メッセージしか解決してくれない。
+  なので、Validatorの↓を自動で解決してれる先はValiadtionMessage.propertiesで、application-messages.propertiesから解決した場合は自分でハンドル
+  して上書きするしかない⇒あとfiel名の解決もできない
+        String message() default "{message.test.PairFieldsEquals}"
+    ・フィールド名の置換
+    ...
+★なので、Field名の置換やメソッド名やフィールド名を使ったメッセージの上書きや置換は自分でやる必要がある
+    → これは画面ではよきにやってくれるけどRestControllerのvalidationやメソッドバリデーションでは自分でやる必要がある
+    → 自分でmessageSource.getMessage(errors.getGlobalError(), Locale.getDefault())とかしないとダメ
+
+★LocalValidatorFactoryBeanを登録するとBeanValidator標準のメッセージプロパティとspringのapplicatio-messagesの両方を見てれるMessageInterpolator
+  がBeanValidatorに登録される。優先度はBeanValidator → Springの順
+LocalValidatorFactoryBean#afterPropertiesSet
+    configuration.messageInterpolator(new LocaleContextMessageInterpolator(targetInterpolator));
+
+★メッセージの定義
+・カスタムメッセージはBeanValidationの標準メッセージは使わず、application-messagesの方にすべて登録する
+・application-messagesには本文がBeanValidation側で解決されるようにBeanValidatioのメッセージ(bv.*)に登録しておく
+・ただし、BeanValidationのメッセージとして登録するがplaceholderは後でラベル化できるように{min}などの属性名ではなくSpringのMessageSourceで置換できるように{1},{2},..にする
+    ↑ただしデフォルトは{0}がないと上書きしない実装になってるので、その部分は拡張している
+・本文を`this.getMessageSource().getMessage(error, request.getLocale())` で取得した値に変えたい場合のみ MessageSourceResolvableのcodesに相当するメッセージを登録する
+
+★{0}がないとMessageSourceで{1}や{2}が置換されない←ハマりどころ　こんなの分かるか！
+LocalValidatorFactoryBean(SpringValidatorAdapter)#requiresMessageFormat
+    ここで{0}があるかでreplace対象かを決定している
+    デフォルトの実装では、フィールド名の Spring スタイルの "{0}" プレースホルダーを MessageFormatSE の指示と見なします。
+    他のプレースホルダーまたはエスケープ構文の出現は、通常、不一致であり、正規表現パターン値などから生じます。
+    標準の Bean 検証では、"{0}" スタイルのプレースホルダーはまったくサポートされていないことに注意してください。
+    これは、Spring MessageSource リソースバンドルで通常使用される機能です。
+
+★MessageSourceのbean名はmessageSourceにしないとダメ-primaryつけてるからBean名は関係ないと思いきや・・←ハマりどころ
+    @Bean
+    MessageSource messageSource() {
+        ...
+    }
+    @Bean
+    @Primary
+    MessageSource testMessageSource() {
+        ...
+    }
+
+  AbstractApplicationContext#initMessageSourceで
+        this.messageSource = beanFactory.getBean(MESSAGE_SOURCE_BEAN_NAME, MessageSource.class);
+  とガッツリBean名で取得しているので、ダメです。Spring内部では期待どおりのMessageSourceが使われません
+
+----------
+★ハマりどころ
+グループ指定をするメソッドバリデーション ← ネットに情報がなく、紛らわしので備忘（@Validatedと@Validが沢山でてきたのハマりました）
+    @Validated // メソッドバリデーションを有効にするための@Validated
+    public interface GenericRepository<T> {
+        @Validated({ Default.class, Add.class }) // グループを指定するための@Validated
+        void add(@Valid T entity); // 引数にバリデーションを掛けるための@Valid(この@Validがないとバリデーションは実行されない)
+    実例⇒io.extact.msa.spring.platform.fw.domain.repository.GenericRepositoryの昔のバージョン（今はDomainにバリデーション入れているので@Validatedはつけてない）
+
+
+----------
+★ハマりどころ
+クラスに@ConfigurationProperties("app.datasource")をつけず@Beanで指定する場合、クラスを指定しない@EnableConfigurationPropertiesの指定が必要
+    ⇒@EnableConfigurationPropertiesを指定することでオブジェクトに設定をバインドするConfigurationPropertiesBindingPostProcessorが有効になる
+    ⇒なので、@EnableConfigurationPropertiesをつけないとConfigurationPropertiesBindingPostProcessorが登録されず、バインドが行われない
+    →@EnableConfigurationPropertiesにConfigクラスを指定しない例はネットにないので、中々分からなかった
+
+★ハマりどころ
+@RequestParamにはrequired属性があり、クエリストリングがない場合はバリデーションを実行する前にMissingServletRequestParameterExceptionが送出される
+よって、↓のように@RequestParamに@NotNullをつけても意味はない
+    @RequestParam("from") LocalDateTime from,
+
+@Validでオブジェクトに対してバリデートする場合、フィールドはprimitiveではなくラッパー型で定義する
+    処理の流れは JSON→オブジェクトバインド→validateとなる
+    よって、primitive型にした場合、意図しない初期値が代入される
+    例）@NotNull @Min(0) int itemId
+            とオブジェクトフィールドに定義した場合、そもそもnullはなくJSONデータが来なくても初期値で0になるためバリデートエラーとならない
+            なので、
+        @NotNull @Min(0) Integer itemId
+            と定義すべき
+    ただし、外部から必ずデータが代入されることが前提の場合は、primitive型でも問題ない
+
+----------
+★カスタムリポジトリの実装
+Composeする実装側もスキャン対象になるようにする必要がある。
+また実装側はインターフェースと実装が同じパッケージにないとメソッド名のQueryと認識されエラーとなる
+How to Access EntityManager with Spring Data | Baeldung
+https://www.baeldung.com/spring-data-entitymanager
+    - @SpringBootTestでリポジトリがスキャンされるのは@SpringBootApplication
+    - @DataJpaTestでリポジトリがスキャンされるのはテストクラスと同じパッケージ。異なる階層にある場合はbasePackageClassesで指定する
+    カスタムリポジトリの実装 :: Spring Data JPA - リファレンス
+    https://spring.pleiades.io/spring-data/jpa/reference/repositories/custom-implementations.html
+
+
+11.3. チュートリアル(Todoアプリケーション REST編) - TERASOLUNA Server Framework for Java (5.x) Development Guideline 5.9.0.RELEASE documentation
+https://terasolunaorg.github.io/guideline/current/ja/Tutorial/TutorialREST.html
+
+5.1. RESTful Web Service - TERASOLUNA Server Framework for Java (5.x) Development Guideline 5.9.0.RELEASE documentation
+https://terasolunaorg.github.io/guideline/current/ja/ArchitectureInDetail/WebServiceDetail/REST.html#resthowtouseexceptionhandling
+
+
+【Spring】Beanのライフサイクル-生成から破棄まで #Java - Qiita
+https://qiita.com/kawakawaryuryu/items/c7d71fd56c497e283198
