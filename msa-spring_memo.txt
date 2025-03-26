@@ -1,6 +1,5 @@
 Maven4
 ■ 直近TODO
-・ItemとUserを削除したときの予約のチェック
 ・masterのリモート実装
 
 ===> Done
@@ -42,6 +41,7 @@ Maven4
             Springのデフォルトのコンバーターが設定されたConversionService
             DefaultFormattingConversionService#addConverter()で追加された順でConverterが上書きされていく
             Converterは変換前の型(sourceType)と変換後の型(targetType)の組み合わせを持っており、この情報を型変換に利用するConverterが検索・決定される
+・ItemとUserを削除したときの予約のチェック
 
 ■ BeanValidation
 ・ネストプロパティのConstraintsのアノテーションは静的に到達可能な定義にする
@@ -130,6 +130,11 @@ https://github.com/shinnosuke0522/spring-oidc-handson
 ・Configの整理
     アプリからみた可変部分をMicroProfileのときのように外に出しにしておく
         ・private-key: classpath:/jwt.key←とか
+・無名変数(_)の利用
+    ReservationDependencyEventListener
+        .ifPresent(item -> { ⇒ itemを_
+        .ifPresent(user -> { ⇒ userを_
+    EclipseをJava24対応の新しいのにする必要あり
 
 ---
 ・uiとwebを入れいる。infrastructureにはjpa,file, remote(インメモリ)の3つにして、ほんとの丸を囲ったオニオンにしよう！
