@@ -41,11 +41,37 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<!-- workaround add settig for Java24 with lombok:edge-SNAPSHOT -->
+		<repository>
+			<id>projectlombok</id>
+			<name>edge-releases</name>
+			<url>https://projectlombok.org/edge-releases</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
-
+	<!-- workaround add settig for Java24 with jacoco -->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+	 
 	<properties>
 		<!-- environment settings -->
-		<java.version>21</java.version>
+		<java.version>24</java.version>
 		<maven.compiler.release>${java.version}</maven.compiler.release>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -61,7 +87,8 @@
 		<version.lib.text-io>3.4.1</version.lib.text-io>
 
 		<!-- maven plugin versions -->
-		<version.plugin.jacoco>0.8.12</version.plugin.jacoco>
+		<!-- workaround for Java24 with jacoco -->
+		<version.plugin.jacoco>0.8.13-SNAPSHOT</version.plugin.jacoco>
 		<version.plugin.docker>0.40.2</version.plugin.docker>
 
 		<!-- docker-maven-plugin setting -->
@@ -80,6 +107,13 @@
 		<sonar.coverage.exclusions>**/io/extact/rms/client/console/**/*</sonar.coverage.exclusions>
 		<sonar.coverage.jacoco.xmlReportPaths>
 			${project.basedir}/../rms-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+
+		<!-- 
+			workaround add settig for Java24 with lombok 
+				- mvn install:install-file from https://projectlombok.org/download-edge
+				- Although it is not necessary to specify a version, it overrides the BOM version.
+		-->
+		<lombok.version>edge-SNAPSHOT</lombok.version>
 	</properties>
 
 	<dependencyManagement>
@@ -202,6 +236,22 @@
 						</images>
 					</configuration>
 				</plugin>
+				<!-- workaround add settig for Java24 by mvn install:install-file -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<annotationProcessorPaths>
+							<path>
+								<groupId>org.projectlombok</groupId>
+								<artifactId>lombok</artifactId>
+							</path>
+						</annotationProcessorPaths>
+						<compilerArgs>
+							<arg>-proc:full</arg>
+						</compilerArgs>
+					</configuration>
+				</plugin>				
 			</plugins>
 		</pluginManagement>
 	</build>

@@ -1,6 +1,12 @@
+https://github.com/jacoco/jacoco/pull/1631
+https://github.com/projectlombok/lombok/issues/3772
+
 Maven4
 ■ 直近TODO
+・Eclipseの最新化
 ・masterのリモート実装
+・MockMvcTestをassertJにする
+
 
 ===> Done
 ・pomの整理・整頓(dependencyとか)
@@ -42,6 +48,34 @@ Maven4
             DefaultFormattingConversionService#addConverter()で追加された順でConverterが上書きされていく
             Converterは変換前の型(sourceType)と変換後の型(targetType)の組み合わせを持っており、この情報を型変換に利用するConverterが検索・決定される
 ・ItemとUserを削除したときの予約のチェック
+
+■ Java新機能調査・使いたいテーマ
+◎JEP 456: 無名変数とパターン
+◎JEP 487: スコープ値（第4プレビュー）
+○JEP 485: Stream Gatherers
+△JEP 488: プリミティブ型のパターン、instanceof、switch (第2プレビュー)[https://speakerdeck.com/ihcomega56/jep-455]
+△JEP 492: 柔軟なコンストラクタ本体 (第3プレビュー)
+    ===メモ===
+    ＜Java24＞
+    https://www.oracle.com/jp/news/announcement/oracle-releases-java-24-2025-03-18
+    ◎JEP 487: スコープ値（第4プレビュー）
+    ○JEP 485: Stream Gatherers
+    △JEP 488: プリミティブ型のパターン、instanceof、switch (第2プレビュー)[https://speakerdeck.com/ihcomega56/jep-455]
+    △JEP 492: 柔軟なコンストラクタ本体 (第3プレビュー)
+    ・JEP 494: モジュール・インポート宣言（第2プレビュー）
+    ・JEP 495: シンプルなソースファイルとインスタンスのmainメソッド (第4プレビュー)
+    ・JEP 484: Class-File API
+    ・JEP 489: Vector API（第9インキュベーター）
+    ＜Java23＞
+    https://www.oracle.com/jp/news/announcement/oracle-releases-java-23-2024-09-17/
+    ・JEP 467: Markdownドキュメント・コメント
+    ＜Java22＞
+    https://www.oracle.com/jp/news/announcement/oracle-releases-java-22-2024-03-19/
+    ◎JEP 456: 無名変数とパターン
+◎:すでに使いたいところがある
+○:勉強して使える場所を探したい
+△:使えるところがあったら使ってみる
+ーーー
 
 ■ BeanValidation
 ・ネストプロパティのConstraintsのアノテーションは静的に到達可能な定義にする
