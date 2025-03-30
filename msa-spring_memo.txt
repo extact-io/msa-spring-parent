@@ -3,10 +3,13 @@ https://github.com/projectlombok/lombok/issues/3772
 
 Maven4
 ■ 直近TODO
-・Eclipseの最新化
+・ItemReservationControllerのパスの見直し
+    - pathのprefixにreserveを追加
+    - 予約のプロパティが検索条件なのはQueryStringにする
+    - そのパスはないけどitemIdとreserverIdの両方が指定されたら返せばいいだけなので
+      プロパティはConditionクラスとしてまとめる
 ・masterのリモート実装
 ・MockMvcTestをassertJにする
-
 
 ===> Done
 ・pomの整理・整頓(dependencyとか)
@@ -48,6 +51,7 @@ Maven4
             DefaultFormattingConversionService#addConverter()で追加された順でConverterが上書きされていく
             Converterは変換前の型(sourceType)と変換後の型(targetType)の組み合わせを持っており、この情報を型変換に利用するConverterが検索・決定される
 ・ItemとUserを削除したときの予約のチェック
+・Eclipseの最新化
 
 ■ Java新機能調査・使いたいテーマ
 ◎JEP 456: 無名変数とパターン
@@ -76,6 +80,30 @@ Maven4
 ○:勉強して使える場所を探したい
 △:使えるところがあったら使ってみる
 ーーー
+
+■ @PathVariableのパラメーター名を省略するかしないか
+@PathVariable Long ownerId とするか @PathVariable("ownerId") Long ownerIdとするか？
+結論は省略する。理由は以下のとおり
+・Springの公式リファレンスも省略で統一されている
+・Terasolunaでも以前は明示することを推奨していが、その記載が削除されている（つまり、やっぱり省略でもいい気がしてきたという考えがあると思われる）
+・一番心配なのはリファクタリング時だが必ずテスト対象にはなるハズなのでその点は問題ないと考える
+
+    ### 明示的な書き方
+    - **メリット**
+      - URLテンプレートとバインド先の対応が明示されている
+      - 引数名をリファクタしてもバインディングは壊れない
+      - ツールでの補完や読みやすさが向上
+    - **デメリット**
+      - 少し冗長
+    ### 暗黙的な書き方
+    - **メリット**
+      - スッキリ書ける
+      - 小さなコントローラーでは十分読みやすい
+    - **デメリット**
+      - **引数名とパス変数名が一致していないとバインディングに失敗**
+      - **リファクタリング時にミスしやすい**（引数名だけ変わるとバインドエラー）
+
+
 
 ■ BeanValidation
 ・ネストプロパティのConstraintsのアノテーションは静的に到達可能な定義にする
