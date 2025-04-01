@@ -4,6 +4,7 @@ https://github.com/projectlombok/lombok/issues/3772
 Maven4
 ■ 直近TODO
 ・ItemReservationControllerのパスの見直し
+    ※RepositoryはConditionを引数に取れないからサービス層にReservationQueryServiceインターフェースを作成する
     - pathのprefixにreserveを追加
     - 予約のプロパティが検索条件なのはQueryStringにする
     - そのパスはないけどitemIdとreserverIdの両方が指定されたら返せばいいだけなので
@@ -192,12 +193,8 @@ https://github.com/shinnosuke0522/spring-oidc-handson
 ・Configの整理
     アプリからみた可変部分をMicroProfileのときのように外に出しにしておく
         ・private-key: classpath:/jwt.key←とか
-・無名変数(_)の利用
-    ReservationDependencyEventListener
-        .ifPresent(item -> { ⇒ itemを_
-        .ifPresent(user -> { ⇒ userを_
-    EclipseをJava24対応の新しいのにする必要あり
-
+・クライアントはJHipseteとかローコードで刷新とかもいいかも
+---
 ---
 ・uiとwebを入れいる。infrastructureにはjpa,file, remote(インメモリ)の3つにして、ほんとの丸を囲ったオニオンにしよう！
     ⇒ リモートは簡単なインメモリにしよう！分散トレースや認証情報の引き渡し、例外ハンドリング(重複チェックくらいでいいか)とかそこら辺がやりたいだけだったので
