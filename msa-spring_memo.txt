@@ -3,6 +3,13 @@ https://github.com/projectlombok/lombok/issues/3772
 
 Maven4
 ■ 直近TODO
+・ItemIdに-1が入ることを許容するのはやっぱりヘン
+    検索条件のitemIdはitemIdにマッチングする単なる値を見るのが妥当
+    よって、ConditionのフィールドをItemIdからIntegerに変える
+・testFindReservationByConditionWithItemIdAndLocalDateとかにテストメソッド名を全部変える
+
+
+
 ・ItemReservationControllerのパスの見直し
     ※RepositoryはConditionを引数に取れないからサービス層にReservationQueryServiceインターフェースを作成する
     - pathのprefixにreserveを追加
