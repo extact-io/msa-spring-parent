@@ -3,20 +3,9 @@ https://github.com/projectlombok/lombok/issues/3772
 
 Maven4
 ■ 直近TODO
-・ItemIdに-1が入ることを許容するのはやっぱりヘン
-    検索条件のitemIdはitemIdにマッチングする単なる値を見るのが妥当
-    よって、ConditionのフィールドをItemIdからIntegerに変える
-・testFindReservationByConditionWithItemIdAndLocalDateとかにテストメソッド名を全部変える
-
-
-
-・ItemReservationControllerのパスの見直し
-    ※RepositoryはConditionを引数に取れないからサービス層にReservationQueryServiceインターフェースを作成する
-    - pathのprefixにreserveを追加
-    - 予約のプロパティが検索条件なのはQueryStringにする
-    - そのパスはないけどitemIdとreserverIdの両方が指定されたら返せばいいだけなので
-      プロパティはConditionクラスとしてまとめる
 ・masterのリモート実装
+    → ClientApiのテストはTestContainerを使って実物でやろう！
+    
 ・MockMvcTestをassertJにする
 
 ===> Done
@@ -60,6 +49,12 @@ Maven4
             Converterは変換前の型(sourceType)と変換後の型(targetType)の組み合わせを持っており、この情報を型変換に利用するConverterが検索・決定される
 ・ItemとUserを削除したときの予約のチェック
 ・Eclipseの最新化
+・ItemReservationControllerのパスの見直し
+    ※RepositoryはConditionを引数に取れないからサービス層にReservationQueryServiceインターフェースを作成する
+    - pathのprefixにreserveを追加
+    - 予約のプロパティが検索条件なのはQueryStringにする
+    - そのパスはないけどitemIdとreserverIdの両方が指定されたら返せばいいだけなので
+      プロパティはConditionクラスとしてまとめる
 
 ■ Java新機能調査・使いたいテーマ
 ◎JEP 456: 無名変数とパターン
