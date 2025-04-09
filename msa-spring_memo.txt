@@ -4,6 +4,8 @@ https://github.com/projectlombok/lombok/issues/3772
 Maven4
 ■ 直近TODO
 ・masterのリモート実装
+    → プロジェクト名はremote-resourceに変えようかなぁ
+    → ItemResourceControllerだな
     → ClientApiのテストはTestContainerを使って実物でやろう！
     
 ・MockMvcTestをassertJにする
@@ -178,6 +180,26 @@ https://github.com/shinnosuke0522/spring-oidc-handson
 
 ---
 ■ DDD化のTODO
+
+
+---
+今後のTODO
+---
+・Customizerを使う
+    → WebSecurityCustomizerとかRestClientCustomizerとか
+・ServiceConnectionを使ってみる
+・BusinessDateを作ってもいいかも←業務日付のだな
+・makingさんのを参考にCustomizerを深掘りしてみる
+・BuildpacksでCDSを使ってみる
+・JWT認証の後にログイン情報をRedisを使って復元する
+・OAuth2（auth0とkeycloakを使ってみる）
+・ClientHttpRequestとClientHttpResponseをクルクル回してFactoryを1つでいいようにする
+    → CustomizableClientRequestのところ
+・fileもSpringのclasspath:を使えるようにする
+・キャッチアップ
+    Spring Boot 3.4.0-RC1 が利用可能になりました
+    https://spring.io/blog/2024/10/26/spring-boot-3-4-0-rc1-available-now
+
 ・実装がそこそこ落ち着いたら↓のをfwからapplicationに移動する
     DateTimePeriod
     UserType
@@ -347,31 +369,6 @@ AuthenticationService
 ・itemはjpaにするがreservationはfileにした場合でも不要なItemEntityがスキャンされることになる。
 ・これを防ぐため、方式の下は業務(集約)ごとにパッケージを切り、Scan対象を細かく制御できるようにする
 
----
-直近TODO
----
-・動くようにする
-
----
-今後のTODO
----
-・Customizerを使う
-    → WebSecurityCustomizerとかRestClientCustomizerとか
-・ServiceConnectionを使ってみる
-・BusinessDateを作ってもいいかも←業務日付のだな
-・makingさんのを参考にCustomizerを深掘りしてみる
-・BuildpacksでCDSを使ってみる
-・JWT認証の後にログイン情報をRedisを使って復元する
-・OAuth2（auth0とkeycloakを使ってみる）
-・ClientHttpRequestとClientHttpResponseをクルクル回してFactoryを1つでいいようにする
-    → CustomizableClientRequestのところ
-・fileもSpringのclasspath:を使えるようにする
-・キャッチアップ
-    Spring Boot 3.4.0-RC1 が利用可能になりました
-    https://spring.io/blog/2024/10/26/spring-boot-3-4-0-rc1-available-now
-
-・機能を追加
-    - レンタル品に管理部門を追加し管理部門に所属する管理者しか削除できないようにする
 
 ---
 ddd-by-examples/library: A comprehensive Domain-Driven Design example with problem space strategic analysis and various tactical patterns.
