@@ -4,6 +4,9 @@ https://github.com/projectlombok/lombok/issues/3772
 Maven4
 ■ 直近TODO
 ・masterのリモート実装
+    → remoteのDTOなどのテスト
+    → fw側のテストを作る(personのremoteテスト)
+
     → プロジェクト名はremote-resourceに変えようかなぁ
     → ItemResourceControllerだな
     → ClientApiのテストはTestContainerを使って実物でやろう！
