@@ -41,33 +41,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-		<!-- workaround add settig for Java24 with lombok:edge-SNAPSHOT -->
-		<repository>
-			<id>projectlombok</id>
-			<name>edge-releases</name>
-			<url>https://projectlombok.org/edge-releases</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
 	</repositories>
-	<!-- workaround add settig for Java24 with jacoco -->
-	<pluginRepositories>
-		<pluginRepository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus Snapshots</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 	 
 	<properties>
 		<!-- environment settings -->
@@ -87,8 +61,7 @@
 		<version.lib.text-io>3.4.1</version.lib.text-io>
 
 		<!-- maven plugin versions -->
-		<!-- workaround for Java24 with jacoco -->
-		<version.plugin.jacoco>0.8.13-SNAPSHOT</version.plugin.jacoco>
+		<version.plugin.jacoco>0.8.13</version.plugin.jacoco>
 		<version.plugin.docker>0.40.2</version.plugin.docker>
 
 		<!-- docker-maven-plugin setting -->
@@ -108,12 +81,8 @@
 		<sonar.coverage.jacoco.xmlReportPaths>
 			${project.basedir}/../rms-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
-		<!-- 
-			workaround add settig for Java24 with lombok 
-				- mvn install:install-file from https://projectlombok.org/download-edge
-				- Although it is not necessary to specify a version, it overrides the BOM version.
-		-->
-		<lombok.version>edge-SNAPSHOT</lombok.version>
+		<!-- bom overrided for required 1.18.38 with JDK 24 -->
+        <lombok.version>1.18.38</lombok.version>
 	</properties>
 
 	<dependencyManagement>
