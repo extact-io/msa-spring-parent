@@ -3,12 +3,18 @@ https://github.com/projectlombok/lombok/issues/3772
 
 Maven4
 ■ 直近TODO
-・masterのリモート実装
-    → プロジェクト名はremote-resourceに変えようかなぁ
-    → ItemResourceControllerだな
-    → ClientApiのテストはTestContainerを使って実物でやろう！
-    
 ・MockMvcTestをassertJにする
+
+デベロッパーサイトネタ
+Springの小話 - MockMvcTesterとAssertJへの変更（移行）例
+- getリクエスト→レスポンスのJSONボディの検証
+- getリクエスト→エラーレスポンスの検証
+- postリクエスト→レスポンスのJSONボディの検証
+- postリクエスト→エラーレスポンスの検証
+とかとかかな
+
+https://github.com/itzg/try-mapstruct-sqids/blob/484e66025b47798662c2d262513770eb24836f2c/src/test/java/me/itzg/trymapstructsqids/TryMapstructSqidsApplicationTests.java#L10
+
 
 ===> Done
 ・pomの整理・整頓(dependencyとか)
@@ -57,6 +63,7 @@ Maven4
     - 予約のプロパティが検索条件なのはQueryStringにする
     - そのパスはないけどitemIdとreserverIdの両方が指定されたら返せばいいだけなので
       プロパティはConditionクラスとしてまとめる
+・masterのリモート実装
 
 ■ Java新機能調査・使いたいテーマ
 ◎JEP 456: 無名変数とパターン
