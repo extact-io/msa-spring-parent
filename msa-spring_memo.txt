@@ -3,7 +3,11 @@ https://github.com/projectlombok/lombok/issues/3772
 
 Maven4
 ■ 直近TODO
-・MockMvcTestをassertJにする
+
+・ログインの認証失敗時のエラーレスポンスのStatusCodeは401にするのが妥当
+    例外を変えるかそのままControllerでResponseを作るかな
+      →LoginFailedExceptionを作ってそれをサービスから投げて、
+      →独自のExceptionHanlderを使ってハンドルさせるようにしよう！
 
 デベロッパーサイトネタ
 Springの小話 - MockMvcTesterとAssertJへの変更（移行）例
@@ -64,6 +68,7 @@ https://github.com/itzg/try-mapstruct-sqids/blob/484e66025b47798662c2d262513770e
     - そのパスはないけどitemIdとreserverIdの両方が指定されたら返せばいいだけなので
       プロパティはConditionクラスとしてまとめる
 ・masterのリモート実装
+・MockMvcTestをassertJにする
 
 ■ Java新機能調査・使いたいテーマ
 ◎JEP 456: 無名変数とパターン
