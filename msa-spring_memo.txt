@@ -4,11 +4,6 @@ https://github.com/projectlombok/lombok/issues/3772
 Maven4
 ■ 直近TODO
 
-・ログインの認証失敗時のエラーレスポンスのStatusCodeは401にするのが妥当
-    例外を変えるかそのままControllerでResponseを作るかな
-      →LoginFailedExceptionを作ってそれをサービスから投げて、
-      →独自のExceptionHanlderを使ってハンドルさせるようにしよう！
-
 デベロッパーサイトネタ
 Springの小話 - MockMvcTesterとAssertJへの変更（移行）例
 - getリクエスト→レスポンスのJSONボディの検証
@@ -69,6 +64,9 @@ https://github.com/itzg/try-mapstruct-sqids/blob/484e66025b47798662c2d262513770e
       プロパティはConditionクラスとしてまとめる
 ・masterのリモート実装
 ・MockMvcTestをassertJにする
+・ログインの認証失敗時のエラーレスポンスのStatusCodeは401にするのが妥当
+      →LoginFailedExceptionを作ってそれをサービスから投げて、
+      →独自のExceptionHanlderを使ってハンドルさせるようにしよう！
 
 ■ Java新機能調査・使いたいテーマ
 ◎JEP 456: 無名変数とパターン
@@ -97,6 +95,31 @@ https://github.com/itzg/try-mapstruct-sqids/blob/484e66025b47798662c2d262513770e
 ○:勉強して使える場所を探したい
 △:使えるところがあったら使ってみる
 ーーー
+
+■ @Importをnestedクラスで定義するとなぜImportされるか？
+  @Configuration
+  public class WebApiConfig {
+      @Import({
+              RestControllerConfig.class,
+              WebSecurityConfig.class,
+              JwtEncodeConfig.class, // for LoginController
+      })
+      public static class ContextConfigs {
+      }
+      ...
+  }
+・@Configurationなクラスの解析処理でnestedクラスが解析される
+・解析されたnestedクラスに@Importが付いているものは@Configurationクラスと同様に扱われる
+・よって、前提となる@Importを本体Configurationクラスとは別に独立して定義することができる
+・詳細は以下を参照
+    ConfigurationClassParser#processMemberClasses
+        ConfigurationClassUtils.isConfigurationCandidate(memberClass.getMetadata())
+    ConfigurationClassParser#processImports
+        https://qiita.com/kagamihoge/items/e51a54d15ff3532f91c7
+★デベロッパーサイトネタ
+  Configurationのネストによる分割←これはhttps://spring.pleiades.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.htmlの「ネストされた @Configuration クラスを使用」に書かれている
+  コンテキストとなるConfiguration定義の分割
+  とかいいかもね
 
 ■ @PathVariableのパラメーター名を省略するかしないか
 @PathVariable Long ownerId とするか @PathVariable("ownerId") Long ownerIdとするか？
