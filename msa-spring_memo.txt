@@ -2,19 +2,49 @@ https://github.com/jacoco/jacoco/pull/1631
 https://github.com/projectlombok/lombok/issues/3772
 
 Maven4
+---
+今後のTODO
+---
+・BuildpacksでCDSを使ってみる
+  https://www.nri-digital.jp/tech/20250107-19725/
+
+・Customizerを使う
+    → WebSecurityCustomizerとかRestClientCustomizerとか
+・ServiceConnectionを使ってみる
+・BusinessDateを作ってもいいかも←業務日付のだな
+・makingさんのを参考にCustomizerを深掘りしてみる
+・JWT認証の後にログイン情報をRedisを使って復元する
+・OAuth2（auth0とkeycloakを使ってみる）
+・ClientHttpRequestとClientHttpResponseをクルクル回してFactoryを1つでいいようにする
+    → CustomizableClientRequestのところ
+・fileもSpringのclasspath:を使えるようにする
+・キャッチアップ
+    Spring Boot 3.4.0-RC1 が利用可能になりました
+    https://spring.io/blog/2024/10/26/spring-boot-3-4-0-rc1-available-now
+
+・ユーザ付随的なものの使いどころとして更新・追加のタイムスタンプを付けておく
+・ItemとUserが削除されたらイベントを発火させる
+・OpneAPIで定義
+・LoginIdと会員種別をユーザ付随情報な感じで持てるようにする
+・Configの整理
+    アプリからみた可変部分をMicroProfileのときのように外に出しにしておく
+        ・private-key: classpath:/jwt.key←とか
+・クライアントはJHipseteとかローコードで刷新とかもいいかも
+
+===> Done
+・uiとwebを入れいる。infrastructureにはjpa,file, remote(インメモリ)の3つにして、ほんとの丸を囲ったオニオンにしよう！
+    ⇒ リモートは簡単なインメモリにしよう！分散トレースや認証情報の引き渡し、例外ハンドリング(重複チェックくらいでいいか)とかそこら辺がやりたいだけだったので
+       ビジネスロジック的なものは最低限なものにしよう
+・開始日時と終了日時は値オブジェクトのしがいがあるところなので値オブジェクトに変更する！
+・domianとapplicaitonはSpringに依存しないようにする
+    ⇒ @Serviceとは使わず、mainのApplicaitonのところでConfigurationするようにしよう
+・実装がそこそこ落ち着いたら↓のをfwからapplicationに移動する
+    DateTimePeriod
+    UserType
+    BeanValidationのコンポーネント
+
+
 ■ 直近TODO
-
-デベロッパーサイトネタ
-Springの小話 - MockMvcTesterとAssertJへの変更（移行）例
-- getリクエスト→レスポンスのJSONボディの検証
-- getリクエスト→エラーレスポンスの検証
-- postリクエスト→レスポンスのJSONボディの検証
-- postリクエスト→エラーレスポンスの検証
-とかとかかな
-
-https://github.com/itzg/try-mapstruct-sqids/blob/484e66025b47798662c2d262513770eb24836f2c/src/test/java/me/itzg/trymapstructsqids/TryMapstructSqidsApplicationTests.java#L10
-
-
 ===> Done
 ・pomの整理・整頓(dependencyとか)
 ・ライブラリの最新化
@@ -215,50 +245,6 @@ https://github.com/shinnosuke0522/spring-oidc-handson
 
 ---
 ■ DDD化のTODO
-
-
----
-今後のTODO
----
-・Customizerを使う
-    → WebSecurityCustomizerとかRestClientCustomizerとか
-・ServiceConnectionを使ってみる
-・BusinessDateを作ってもいいかも←業務日付のだな
-・makingさんのを参考にCustomizerを深掘りしてみる
-・BuildpacksでCDSを使ってみる
-・JWT認証の後にログイン情報をRedisを使って復元する
-・OAuth2（auth0とkeycloakを使ってみる）
-・ClientHttpRequestとClientHttpResponseをクルクル回してFactoryを1つでいいようにする
-    → CustomizableClientRequestのところ
-・fileもSpringのclasspath:を使えるようにする
-・キャッチアップ
-    Spring Boot 3.4.0-RC1 が利用可能になりました
-    https://spring.io/blog/2024/10/26/spring-boot-3-4-0-rc1-available-now
-
-・実装がそこそこ落ち着いたら↓のをfwからapplicationに移動する
-    DateTimePeriod
-    UserType
-    BeanValidationのコンポーネント
-
-・domianとapplicaitonはSpringに依存しないようにする
-    ⇒ @Serviceとは使わず、mainのApplicaitonのところでConfigurationするようにしよう
-
-・ユーザ付随的なものの使いどころとして更新・追加のタイムスタンプを付けておく
-・ItemとUserが削除されたらイベントを発火させる
-・開始日時と終了日時は値オブジェクトのしがいがあるところなので値オブジェクトに変更する！
-・OpneAPIで定義
-・validationをtypeをcomponet-bizに独立させて持っていく？
-・LoginIdと会員種別をユーザ付随情報な感じで持てるようにする
-・Configの整理
-    アプリからみた可変部分をMicroProfileのときのように外に出しにしておく
-        ・private-key: classpath:/jwt.key←とか
-・クライアントはJHipseteとかローコードで刷新とかもいいかも
----
----
-・uiとwebを入れいる。infrastructureにはjpa,file, remote(インメモリ)の3つにして、ほんとの丸を囲ったオニオンにしよう！
-    ⇒ リモートは簡単なインメモリにしよう！分散トレースや認証情報の引き渡し、例外ハンドリング(重複チェックくらいでいいか)とかそこら辺がやりたいだけだったので
-       ビジネスロジック的なものは最低限なものにしよう
-
 ■ アプリケーション層の理解
 ・ドメインを使ってユースケースの処理を実現する層
 
