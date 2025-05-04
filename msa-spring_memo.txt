@@ -1,5 +1,33 @@
-https://github.com/jacoco/jacoco/pull/1631
-https://github.com/projectlombok/lombok/issues/3772
+■index
+●パッケージング
+Spring Boot アプリケーションのパッケージング :: Spring Boot - リファレンス
+https://spring.pleiades.io/spring-boot/reference/packaging/
+  Spring アプリケーションの起動時間"改善"と Cloud Native Buildpacks のすゝめ - VMware Japan Blog
+  https://blogs.vmware.com/vmware-japan/2024/05/how-to-easily-make-spring-faster.html
+  DockerfileレスなJavaアプリケーション開発を試してみる | TECH | NRI Digital
+  https://www.nri-digital.jp/tech/20250107-19725/
+  AOTコンパイル後のJavaプログラムの性能がどう変わるのか | Atlas Developers Blog
+  https://devlog.atlas.jp/2024/07/30/5516
+
+Maven プラグイン :: Spring Boot - リファレンス
+https://spring.pleiades.io/spring-boot/maven-plugin/
+
+
+・CDS
+・AOTキャッシュ
+・Dockerfiles(https://spring.pleiades.io/spring-boot/reference/packaging/container-images/dockerfiles.html)
+  - Docker イメージのレイヤー化(https://spring.pleiades.io/spring-boot/reference/packaging/container-images/efficient-images.html)
+・Buildpacks(https://spring.pleiades.io/spring-boot/reference/packaging/container-images/cloud-native-buildpacks.html)
+
+-- AppCDS
+java -XX:ArchiveClassesAtExit=application.jsa -Dspring.context.exit=onRefresh -jar msa-spring-rms-remote-resources.jar
+java -XX:SharedArchiveFile=application.jsa -Xshare:on -jar msa-spring-rms-remote-resources.jar
+
+-- AOTキャッシュ
+java -XX:AOTMode=record -XX:AOTConfiguration=app.aotconf -Dspring.context.exit=onRefresh -jar msa-spring-rms-remote-resources.jar
+java -XX:AOTMode=create -XX:AOTConfiguration=app.aotconf -XX:AOTCache=app.aot -jar msa-spring-rms-remote-resources.jar
+java -XX:AOTCache=app.aot -jar msa-spring-rms-remote-resources.jar
+
 
 Maven4
 ---
