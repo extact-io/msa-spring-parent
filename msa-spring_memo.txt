@@ -9,6 +9,7 @@ https://spring.pleiades.io/spring-boot/reference/packaging/
   AOTコンパイル後のJavaプログラムの性能がどう変わるのか | Atlas Developers Blog
   https://devlog.atlas.jp/2024/07/30/5516
 
+
 Maven プラグイン :: Spring Boot - リファレンス
 https://spring.pleiades.io/spring-boot/maven-plugin/
 
@@ -29,10 +30,18 @@ java -XX:AOTMode=create -XX:AOTConfiguration=app.aotconf -XX:AOTCache=app.aot -j
 java -XX:AOTCache=app.aot -jar msa-spring-rms-remote-resources.jar
 
 
+ネタ：実行可能jarにlombokが入ってるのはなぜ？
+  実行可能アーカイブのパッケージ化 :: Spring Boot - リファレンス
+  https://spring.pleiades.io/spring-boot/maven-plugin/packaging.html
+
+
 Maven4
 ---
 今後のTODO
 ---
+・google buildpacksを使ってみる
+  ⇒ 同じバージョンの古いイメージを削除するようにする
+・jlinkを理解する
 ・@ServiceConnectionのプロパティを書き換える仕組みを理解する
 
 ・Customizerを使う
