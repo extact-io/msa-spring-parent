@@ -33,27 +33,24 @@ Maven4
 ---
 今後のTODO
 ---
-・BuildpacksでCDSを使ってみる
-  https://www.nri-digital.jp/tech/20250107-19725/
+・@ServiceConnectionのプロパティを書き換える仕組みを理解する
 
 ・Customizerを使う
     → WebSecurityCustomizerとかRestClientCustomizerとか
-・ServiceConnectionを使ってみる
-・BusinessDateを作ってもいいかも←業務日付のだな
 ・makingさんのを参考にCustomizerを深掘りしてみる
+
+・BusinessDateを作ってもいいかも←業務日付のだな
+
 ・JWT認証の後にログイン情報をRedisを使って復元する
+・ユーザ付随的なものの使いどころとして更新・追加のタイムスタンプを付けておく
+・LoginIdと会員種別をユーザ付随情報な感じで持てるようにする
 ・OAuth2（auth0とkeycloakを使ってみる）
+
+・OpneAPIで定義
+
 ・ClientHttpRequestとClientHttpResponseをクルクル回してFactoryを1つでいいようにする
     → CustomizableClientRequestのところ
-・fileもSpringのclasspath:を使えるようにする
-・キャッチアップ
-    Spring Boot 3.4.0-RC1 が利用可能になりました
-    https://spring.io/blog/2024/10/26/spring-boot-3-4-0-rc1-available-now
 
-・ユーザ付随的なものの使いどころとして更新・追加のタイムスタンプを付けておく
-・ItemとUserが削除されたらイベントを発火させる
-・OpneAPIで定義
-・LoginIdと会員種別をユーザ付随情報な感じで持てるようにする
 ・Configの整理
     アプリからみた可変部分をMicroProfileのときのように外に出しにしておく
         ・private-key: classpath:/jwt.key←とか
@@ -70,6 +67,9 @@ Maven4
     DateTimePeriod
     UserType
     BeanValidationのコンポーネント
+・BuildpacksでCDSを使ってみる
+    - デベロッパーサイトネタ：対向システムを@Testcontainersを使って起動するときにDynamicPropertySourceを使わず動的にホスト：ポートを登録する
+・ItemとUserが削除されたらイベントを発火させる
 
 
 ■ 直近TODO
