@@ -9,10 +9,12 @@ https://spring.pleiades.io/spring-boot/reference/packaging/
   AOTコンパイル後のJavaプログラムの性能がどう変わるのか | Atlas Developers Blog
   https://devlog.atlas.jp/2024/07/30/5516
 
+  How to Build Java Apps with Paketo Buildpacks - Paketo Buildpacks
+  https://paketo.io/docs/howto/java/
+  > pack build msa-spring-rms-remote-resources:0.0.1-SNAPSHOT --builder paketobuildpacks/builder-jammy-base --env BP_JVM_VERSION=24 --volume "C:\Users\ogiwarat\.m2":/home/cnb/.m2
 
-Maven プラグイン :: Spring Boot - リファレンス
-https://spring.pleiades.io/spring-boot/maven-plugin/
-
+  Cloud Native Buildpacksで遊んでみる（Java） - CLOVER
+  https://kazuhira-r.hatenablog.com/entry/2020/10/31/235317
 
 ・CDS
 ・AOTキャッシュ
@@ -39,8 +41,15 @@ Maven4
 ---
 今後のTODO
 ---
+・profileでローカルはdocker-pluginsでdocker buildにして、CIではspring-bootコマンドでやろう
+・ローカルでイメージを作成するのはdocker buildが一番早くていいな
+  ⇒ docker-pluginsでやるようにしておこう
+・CI/CDではspring-bootコマンドで
+  ⇒ 再現性はそもそもjarが作り直されたら失われる。なので結局のところ内容が変わってない定時ビルドでも
+     不要なスナップショットが溜まっていくので、packコマンドでやるのと大差ない
 ・google buildpacksを使ってみる
   ⇒ 同じバージョンの古いイメージを削除するようにする
+
 ・jlinkを理解する
 ・@ServiceConnectionのプロパティを書き換える仕組みを理解する
 
@@ -162,6 +171,23 @@ Maven4
 ○:勉強して使える場所を探したい
 △:使えるところがあったら使ってみる
 ーーー
+
+■ buildpacksのcreatedDateにはnowを指定する
+buildpackはビルドの再現性を確保するためcreatedDateを過去日に固定している。
+しかし、そもそもmavenからbuildすると常に最初からビルドされ、それ以前に再現性は保たれていない
+このため、createdDateを過去日にする意味はなくなっているのでいつのビルドかわかりやすいように
+createdDateをnowにしている
+
+  ビルドの再現性とは？ - クラウドネイティブビルドパック
+  https://buildpacks.io/docs/for-app-developers/concepts/reproducibility/
+
+そもそもspring-boot:build-imageではレイヤーキャッシュは一切効かず毎回新規に作成される
+  from ChatGPT先生
+  https://chatgpt.com/share/68207b74-bdb8-8006-ba48-f0fca578cb44
+    spring-boot-maven-plugin の build-image ゴールを使ってビルドする場合、デフォルトでは Buildpacks 
+    のキャッシュが有効にならず、毎回新規イメージが作成されるような動作になります。
+    これは **ローカルキャッシュ（レイヤーキャッシュやビルドキャッシュ）**が適切に保持・再利用されて
+    いないためです。
 
 ■ @Importをnestedクラスで定義するとなぜImportされるか？
   @Configuration

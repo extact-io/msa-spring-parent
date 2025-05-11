@@ -1,232 +1,348 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.4</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>io.extact</groupId>
-	<artifactId>msa-spring-parent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.4</version>
+        <relativePath /> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>io.extact</groupId>
+    <artifactId>msa-spring-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-	<name>msa-spring-parent</name>
-	<description>Parent POM of Rental Management System By MSA</description>
+    <name>msa-spring-parent</name>
+    <description>Parent POM of Rental Management System By MSA</description>
 
-	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>GitHub Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/extact-io/msa-spring-parent</url>
-		</repository>
-		<snapshotRepository>
-			<id>github</id>
-			<name>GitHub Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/extact-io/msa-spring-parent</url>
-		</snapshotRepository>
-	</distributionManagement>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/extact-io/msa-spring-parent</url>
+        </repository>
+        <snapshotRepository>
+            <id>github</id>
+            <name>GitHub Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/extact-io/msa-spring-parent</url>
+        </snapshotRepository>
+    </distributionManagement>
 
-	<repositories>
-		<repository>
-			<id>github</id>
-			<name>GitHub Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/extact-io/msa-spring-parent</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	 
-	<properties>
-		<!-- environment settings -->
-		<java.version>24</java.version>
-		<maven.compiler.release>${java.version}</maven.compiler.release>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/extact-io/msa-spring-parent</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
-		<!-- library versions -->
-		<version.lib.jose4j>0.9.6</version.lib.jose4j>
-		<version.lib.auth0jwt>4.5.0</version.lib.auth0jwt>
-		<version.lib.assertj>3.27.3</version.lib.assertj>
-		<version.lib.archunit>1.4.0</version.lib.archunit>
-		<version.lib.commons-lang>3.17.0</version.lib.commons-lang>
-		<version.lib.commons-csv>1.13.0</version.lib.commons-csv>
-		<version.lib.logback-access>2.0.6</version.lib.logback-access>
-		<version.lib.text-io>3.4.1</version.lib.text-io>
+    <properties>
+        <!-- environment settings -->
+        <java.version>24</java.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<!-- maven plugin versions -->
-		<version.plugin.jacoco>0.8.13</version.plugin.jacoco>
-		<version.plugin.docker>0.40.2</version.plugin.docker>
+        <!-- library versions -->
+        <version.lib.jose4j>0.9.6</version.lib.jose4j>
+        <version.lib.auth0jwt>4.5.0</version.lib.auth0jwt>
+        <version.lib.assertj>3.27.3</version.lib.assertj>
+        <version.lib.archunit>1.4.0</version.lib.archunit>
+        <version.lib.commons-lang>3.17.0</version.lib.commons-lang>
+        <version.lib.commons-csv>1.13.0</version.lib.commons-csv>
+        <version.lib.logback-access>2.0.6</version.lib.logback-access>
+        <version.lib.text-io>3.4.1</version.lib.text-io>
 
-		<!-- docker-maven-plugin setting -->
-		<image.registry>ghcr.io</image.registry>
-		<image.owner>extact-io</image.owner>
-		<image.tag>latest</image.tag>
-		<image.cleanup>try</image.cleanup>
+        <!-- maven plugin versions -->
+        <version.plugin.jacoco>0.8.13</version.plugin.jacoco>
+        <version.plugin.exec-maven>3.5.0</version.plugin.exec-maven>
+        <version.plugin.docker>0.46.0</version.plugin.docker>
 
-		<!-- sonarcloud setting -->
-		<sonar.projectKey>extact-io_rms</sonar.projectKey>
-		<sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
-		<sonar.organization>extact-io</sonar.organization>
-		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		<sonar.test.exclusions>**/*Test.java</sonar.test.exclusions>
-		<sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
-		<sonar.coverage.exclusions>**/io/extact/rms/client/console/**/*</sonar.coverage.exclusions>
-		<sonar.coverage.jacoco.xmlReportPaths>
-			${project.basedir}/../rms-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <!-- exec-maven settings -->
+        <container.image.name>${project.artifactId}:${project.version}</container.image.name>
+        <container.image.tag>${container.image.name}-${git.build.time}</container.image.tag>
+        <docker.cmd.opt1>--filter=reference='${container.image.name}'</docker.cmd.opt1>
+        <docker.cmd.opt2>--format '{{.ID}}'</docker.cmd.opt2>
 
-		<!-- bom overrided for required 1.18.38 with JDK 24 -->
+        <!-- sonarcloud settings -->
+        <sonar.projectKey>extact-io_rms</sonar.projectKey>
+        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+        <sonar.organization>extact-io</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.test.exclusions>**/*Test.java</sonar.test.exclusions>
+        <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
+        <sonar.coverage.exclusions>**/io/extact/rms/client/console/**/*</sonar.coverage.exclusions>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.basedir}/../rms-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+
+        <!-- bom overrided for required 1.18.38 with JDK 24 -->
         <lombok.version>1.18.38</lombok.version>
-	</properties>
+    </properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.extact</groupId>
-				<artifactId>msa-spring-test-lib</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.extact</groupId>
-				<artifactId>msa-spring-platform-core</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.extact</groupId>
-				<artifactId>msa-spring-platform-fw</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.extact</groupId>
-				<artifactId>msa-spring-platform-fw-test-lib</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.extact</groupId>
-				<artifactId>msa-spring-rms-application</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>${version.lib.commons-lang}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-csv</artifactId>
-				<version>${version.lib.commons-csv}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.beryx</groupId>
-				<artifactId>text-io</artifactId>
-				<version>${version.lib.text-io}</version>
-			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback.access</groupId>
-				<artifactId>logback-access-tomcat</artifactId>
-				<version>${version.lib.logback-access}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.bitbucket.b_c</groupId>
-				<artifactId>jose4j</artifactId>
-				<version>${version.lib.jose4j}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.auth0</groupId>
-				<artifactId>java-jwt</artifactId>
-				<version>${version.lib.auth0jwt}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.assertj</groupId>
-				<artifactId>assertj-core</artifactId>
-				<version>${version.lib.assertj}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.tngtech.archunit</groupId>
-				<artifactId>archunit-junit5</artifactId>
-				<version>${version.lib.archunit}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.extact</groupId>
+                <artifactId>msa-spring-test-lib</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.extact</groupId>
+                <artifactId>msa-spring-platform-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.extact</groupId>
+                <artifactId>msa-spring-platform-fw</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.extact</groupId>
+                <artifactId>msa-spring-platform-fw-test-lib</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.extact</groupId>
+                <artifactId>msa-spring-rms-application</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${version.lib.commons-lang}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-csv</artifactId>
+                <version>${version.lib.commons-csv}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.beryx</groupId>
+                <artifactId>text-io</artifactId>
+                <version>${version.lib.text-io}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback.access</groupId>
+                <artifactId>logback-access-tomcat</artifactId>
+                <version>${version.lib.logback-access}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bitbucket.b_c</groupId>
+                <artifactId>jose4j</artifactId>
+                <version>${version.lib.jose4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>${version.lib.auth0jwt}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${version.lib.assertj}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tngtech.archunit</groupId>
+                <artifactId>archunit-junit5</artifactId>
+                <version>${version.lib.archunit}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.tngtech.archunit</groupId>
-			<artifactId>archunit-junit5</artifactId>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<finalName>${project.artifactId}</finalName>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>${version.plugin.jacoco}</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>prepare-agent</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>report</id>
-							<phase>test</phase>
-							<goals>
-								<goal>report</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>io.fabric8</groupId>
-					<artifactId>docker-maven-plugin</artifactId>
-					<version>${version.plugin.docker}</version>
-					<configuration>
-						<registry>${image.registry}</registry>
-						<images>
-							<image>
-								<name>${image.owner}/${image.name}</name>
-								<build>
-									<tags>
-										<tag>${image.tag}</tag>
-									</tags>
-									<contextDir>${project.basedir}</contextDir>
-									<cleanup>${image.cleanup}</cleanup>
-								</build>
-							</image>
-						</images>
-					</configuration>
-				</plugin>
-				<!-- workaround add settig for Java24 by mvn install:install-file -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<configuration>
-						<annotationProcessorPaths>
-							<path>
-								<groupId>org.projectlombok</groupId>
-								<artifactId>lombok</artifactId>
-							</path>
-						</annotationProcessorPaths>
-						<compilerArgs>
-							<arg>-proc:full</arg>
-						</compilerArgs>
-					</configuration>
-				</plugin>				
-			</plugins>
-		</pluginManagement>
-	</build>
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${version.plugin.jacoco}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>report</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!--
+                    workaround add settig for Java24 by mvn install:install-file
+                    https://github.com/projectlombok/lombok/issues/3772
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </path>
+                        </annotationProcessorPaths>
+                        <compilerArgs>
+                            <arg>-proc:full</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>io.github.git-commit-id</groupId>
+                    <artifactId>git-commit-id-maven-plugin</artifactId>
+                    <configuration>
+                        <abbrevLength>7</abbrevLength>
+                        <dateFormat>yyyyMMddHHmmss</dateFormat>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${version.plugin.exec-maven}</version>
+                    <executions>
+                        <execution>
+                            <id>remove-old-image</id>
+                            <phase>post-integration-test</phase>
+                            <goals>
+                                <goal>exec</goal>
+                            </goals>
+                            <configuration>
+                                <!-- イメージIDを逆引きして該当バージョン紐づくタグもすべて削除する -->
+                                <executable>sh</executable>
+                                <arguments>
+                                    <argument>-c</argument>
+                                    <argument>
+                                        docker rmi -f $(docker images \
+                                        ${docker.cmd.opt1} \
+                                        ${docker.cmd.opt2}) \
+                                        || true
+                                    </argument>
+                                </arguments>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                        <image>
+                            <name>${container.image.name}</name>
+                            <tags>
+                                <tag>${container.image.tag}</tag>
+                            </tags>
+                            <!-- for google buildpack
+                            <builder>gcr.io/buildpacks/builder:latest</builder>
+                            -->
+                            <builder>
+                                paketobuildpacks/builder-jammy-buildpackless-base</builder>
+                            <buildpacks>
+                                <buildpack>gcr.io/paketo-buildpacks/oracle</buildpack>
+                                <buildpack>paketobuildpacks/java</buildpack>
+                            </buildpacks>
+                            <createdDate>now</createdDate>
+                            <env>
+                                <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
+                                <BP_JVM_CDS_ENABLED>true</BP_JVM_CDS_ENABLED>
+                                <BP_JVM_JLINK_ENABLED>true</BP_JVM_JLINK_ENABLED>
+                            </env>
+                        </image>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <!-- default profile -->
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>build-image</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- イメージIDを逆引きして該当バージョン紐づくタグもすべて削除する -->
+                                    <executable>sh</executable>
+                                    <arguments>
+                                        <argument>-c</argument>
+                                        <argument>
+                                            docker build -t \
+                                            ${container.image.name} . \
+                                            &amp;&amp; docker tag \
+                                            ${container.image.name} \
+                                            ${container.image.tag}
+                                        </argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- CommandLineInterface profile -->
+        <profile>
+            <id>cli</id>
+            <properties>
+                <mvn.profile.cli>on</mvn.profile.cli>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>build-image-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
