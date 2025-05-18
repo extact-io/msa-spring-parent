@@ -60,6 +60,8 @@ Maven4
 ・BusinessDateを作ってもいいかも←業務日付のだな
 
 ・JWT認証の後にログイン情報をRedisを使って復元する
+  → ユーザ付随的な情報はAuthenticate#setDtailsに入れるのがSpringのお作法的に正解な気がする
+  → RmsAuthenticationにオレオレのLoginUserを持てるようにするRmsAuthentication<T extends LoginUser>で型パラメータを導入するのがいい気がする
 ・ユーザ付随的なものの使いどころとして更新・追加のタイムスタンプを付けておく
 ・LoginIdと会員種別をユーザ付随情報な感じで持てるようにする
 ・OAuth2（auth0とkeycloakを使ってみる）
