@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.4</version>
+        <version>3.5.0</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.extact</groupId>
@@ -82,8 +82,10 @@
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.basedir}/../rms-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
-        <!-- bom overrided for required 1.18.38 with JDK 24 -->
+        <!-- workaround for required 1.18.38 with JDK 24 -->
         <lombok.version>1.18.38</lombok.version>
+        <!-- workaround for https://github.com/TNG/ArchUnit/issues/1442 -->
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -111,6 +113,11 @@
             <dependency>
                 <groupId>io.extact</groupId>
                 <artifactId>msa-spring-rms-application</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.extact</groupId>
+                <artifactId>msa-spring-rms-ui-console-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -266,7 +273,6 @@
                             <builder>
                                 paketobuildpacks/builder-jammy-buildpackless-base</builder>
                             <buildpacks>
-                                <buildpack>gcr.io/paketo-buildpacks/oracle</buildpack>
                                 <buildpack>paketobuildpacks/java</buildpack>
                             </buildpacks>
                             <createdDate>now</createdDate>
@@ -283,14 +289,19 @@
     </build>
 
     <profiles>
-        <!-- default profile -->
         <profile>
             <id>local</id>
+            <!--
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            -->
             <build>
                 <plugins>
+                    <!--
+                       buildpackはキャッシュが効かず毎回イメージをフルビルドするため非常に
+                       遅いためローカル環境ではdocker buildでイメージをビルドしている
+                    -->
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
@@ -321,11 +332,10 @@
                 </plugins>
             </build>
         </profile>
-        <!-- CommandLineInterface profile -->
         <profile>
-            <id>cli</id>
+            <id>ci</id>
             <properties>
-                <mvn.profile.cli>on</mvn.profile.cli>
+                <mvn.profile.ci>on</mvn.profile.ci>
             </properties>
             <build>
                 <plugins>

@@ -34,7 +34,7 @@ java -XX:AOTCache=app.aot -jar msa-spring-rms-remote-resources.jar
 
 ネタ：実行可能jarにlombokが入ってるのはなぜ？
   実行可能アーカイブのパッケージ化 :: Spring Boot - リファレンス
-  https://spring.pleiades.io/spring-boot/maven-plugin/packaging.html
+  https://spring.pleiades.io/spring-boot/maven-plugin/packaging.html#packaging.examples.exclude-dependency
 
 
 Maven4
