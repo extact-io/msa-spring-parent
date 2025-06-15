@@ -66,9 +66,10 @@
         <version.plugin.docker>0.46.0</version.plugin.docker>
 
         <!-- exec-maven settings -->
-        <container.image.name>${project.artifactId}:${project.version}</container.image.name>
-        <container.image.tag>${container.image.name}-${git.build.time}</container.image.tag>
-        <docker.cmd.opt1>--filter=reference='${container.image.name}'</docker.cmd.opt1>
+        <image.version.tag>${project.artifactId}:${project.version}</image.version.tag>
+        <image.version-timestamp.tag>
+            ${project.artifactId}:${project.version}-${git.build.time}</image.version-timestamp.tag>
+        <docker.cmd.opt1>--filter=reference='${image.version.tag}'</docker.cmd.opt1>
         <docker.cmd.opt2>--format '{{.ID}}'</docker.cmd.opt2>
 
         <!-- sonarcloud settings -->
@@ -263,9 +264,10 @@
                             </exclude>
                         </excludes>
                         <image>
-                            <name>${container.image.name}</name>
+                            <name>${project.artifactId}</name>
                             <tags>
-                                <tag>${container.image.tag}</tag>
+                                <tag>${image.version.tag}</tag>
+                                <tag>${image.version-timestamp.tag}</tag>
                             </tags>
                             <!-- for google buildpack
                             <builder>gcr.io/buildpacks/builder:latest</builder>
@@ -289,19 +291,14 @@
     </build>
 
     <profiles>
+        <!--
+           buildpackはキャッシュが効かず毎回イメージをフルビルドするため非常に遅いため
+           ローカル環境でdocker buildでイメージをビルドしたい場合に利用するプロファイル
+        -->
         <profile>
-            <id>local</id>
-            <!--
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            -->
+            <id>docker-build</id>
             <build>
                 <plugins>
-                    <!--
-                       buildpackはキャッシュが効かず毎回イメージをフルビルドするため非常に
-                       遅いためローカル環境ではdocker buildでイメージをビルドしている
-                    -->
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
@@ -318,11 +315,10 @@
                                     <arguments>
                                         <argument>-c</argument>
                                         <argument>
-                                            docker build -t \
-                                            ${container.image.name} . \
-                                            &amp;&amp; docker tag \
-                                            ${container.image.name} \
-                                            ${container.image.tag}
+                                            docker build . \
+                                            -t ${project.artifactId} \
+                                            -t ${image.version.tag} \
+                                            -t ${image.version-timestamp.tag}
                                         </argument>
                                     </arguments>
                                 </configuration>
@@ -333,7 +329,7 @@
             </build>
         </profile>
         <profile>
-            <id>ci</id>
+            <id>buildpacks-build</id>
             <properties>
                 <mvn.profile.ci>on</mvn.profile.ci>
             </properties>
