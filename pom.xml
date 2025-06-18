@@ -256,7 +256,17 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>build-info</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                     <configuration>
+                        <!-- ubar-jarではなく通常のjarをリポジトリに登録されるようにする -->
+                        <attach>false</attach>
+                        <classifier>uber</classifier>
                         <excludes>
                             <exclude>
                                 <groupId>org.projectlombok</groupId>
