@@ -1,3 +1,111 @@
+TODO
+・prometeusのスクレイピングとotlpで採れるシグナルの違いを確認し、理由をしらべてみる
+    → メトリクス名が違う問題。Prometeus向けのGrafanaのダッシュボードを書き換えるかな。
+    → メトリクス名ってどこでどうやって決めてるんだろ？
+・独自のSpanやメトリクスも取得してみる
+--
+・collectorのreceiverポートを4418にするのではなく、grafana/tempoのポートの方を4418とかに変更する
+・serverの方はすべてHTTPにする
+・Tempoへのラベルをでるようにする
+・clientの方もすべてcollector経由にする。ただし、metricsはprometeusreceiver方式でtraceとlogsはgRPCにする
+
+
+■ Spring Bootのlogback連携
+・前提
+    - logback.xmlからは${foo}としてシステムプロパティを参照できる
+    - Spring Bootのlogback連携は起動時にapplication.ymlの設定をシステムプロパティに設定することで設定を連携させている
+・logging.consoleなどの設定をもとにLogbackに設定してしているのは DefaultLogbackConfiguration クラス
+    → CONSOLEなどのappenderを登録している
+・logging.consoleなどの設定を取得してLoggingContextから取れるようにSystemPropertiesに設定しているのがLoggingSystemPropertiesクラス
+    → LoggingSystemProperties#applyメソッドをみるとなにをやっているか大体わかる
+    → https://spring.pleiades.io/spring-boot/reference/features/logging.html#features.logging.custom-log-configuration
+・Spring Bootのログインぐシステムで扱える設定はLoggingSystemPropertyをみると分かる
+    → 全部定義されているように見える
+・application.ymlとlogback-spring.xmlの設定の流れは以下のとおり
+    - logging.pattern.consoleに設定がある場合、その設定がCONSOLE_LOG_PATTERNのキー名でシステムプロパティに設定される
+    - org/springframework/boot/logging/logback/defaults.xmlの<property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{... />の評価に使われる
+      システムプロパティにCONSOLE_LOG_PATTERNが設定されている場合、その値が使われ、設定されていない場合は":"以降のデフォルト設定が使われる
+・OpenTelemetry（OTLP）でLokiにログを送信する
+    - ロガー :: Spring Boot - リファレンスドキュメント
+      https://spring.pleiades.io/spring-boot/reference/actuator/loggers.html#actuator.loggers.opentelemetry
+    - OpenTelemetry Collector を使用して Loki にログを取り込む | Grafana Loki ドキュメント
+      https://grafana.com/docs/loki/latest/send-data/otel/
+    - opentelemetry-java-instrumentation/instrumentation/logback/logback-appender-1.0/library/README.md at main - open-telemetry/opentelemetry-java-instrumentation
+      https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/instrumentation/logback/logback-appender-1.0/library/README.md
+    - 下のLokiのリファレンスのエンドポイントが間違ってる
+        OpenTelemetry Collector と Loki チュートリアルの開始 | Grafana Loki ドキュメント
+        https://grafana.com/docs/loki/latest/send-data/otel/otel-collector-getting-started/#export-logs-to-loki-using-a-opentelemetry-exporter
+        誤）endpoint: "http://loki:3100/otlp"
+        正）endpoint: "http://loki:3100/otlp/v1/logs"
+
+19004
+4701
+17175
+
+
+■ otel-collectorのreceiverのendpoint
+・gRPCはパスは不要だが、httpは下記の/v1のパスが必要
+    http://host:port/v1/traces
+    http://host:port/v1/metrics
+    http://host:port/v1/logs
+
+■ SpringBootのOtelの設定
+・otel.exporter.otlp.endpointなどのOTELの設定は management.otel.*にマッピングされている
+・Spring BootのautoconfigurationのOtlpLoggingConfigurationsとかあたりを見ると分かる
+
+
+■ micrometer-tracing-bridge-otel
+    → SpringはObservation(Micrometer)を使ったテレメトリの生成処理をRestClientなどの各所に直接埋め込んでいる
+        → ObservationはMicrometer tracingのインタフェースを経由してtraceを作成するが、tracing-bridge-otelを使うことで
+           Micrometer tracingインターフェースの実体にはOTELのTraceやSpanが使われるようになる
+    → micrometer-tracing-bridge-otelはtraceテレメトリの実体をMicrometer traceではなくOTELのテレメトリに切り替える
+       モジュール的な意味を持っている
+
+opentelemetry-exporter-otlp
+    → OTELのテレメトリをOpenTelemetry Protocol(OTLP)に変換して送信するexporter。OTLPを受け入れられる相手に利用するもの
+opentelemetry-exporter-zipkin
+    → OTELのテレメトリをZipkinの独自フォーマットに変換して送信するexporter。Zipkinの独自フォーマットを受け入れられる相手に利用するもの
+
+GRomR1/monitoring-microservices-demo: Demo Apps with Traces,Logs,Metrics included (Grafana, Loki, Tempo, Jaeger, Prometheus, OpenTelemetry, Karma, Pyrra)
+https://github.com/GRomR1/monitoring-microservices-demo/tree/main
+grafana/grafana-opentelemetry-starter: Spring Boot starter for OpenTelemetry
+https://github.com/grafana/grafana-opentelemetry-starter
+
+
+ECS で小さく始める OpenTelemetry 構成
+https://zenn.dev/ryoyoshii/articles/0552d3c8dcca6a
+
+Spring Boot Actuator と Grafana Stack が連携できるように設定する
+https://zenn.dev/kazokmr/scraps/3ad22721062367
+
+Spring Boot + Prometheus + Grafanaでデータ可視化(概要とローカル環境構築編)
+https://zenn.dev/yucatio/articles/038246af8ae971
+
+★ashenwgt/springboot-observability-grafana-prometheus-tempo-loki: Observability Demo Project (using Springboot, Grafana, Prometheus, Tempo, Loki, Micrometer etc.)
+https://github.com/ashenwgt/springboot-observability-grafana-prometheus-tempo-loki
+
+tempo/example/docker-compose/otel-collector/docker-compose.yaml at main - grafana/tempo
+https://github.com/grafana/tempo/blob/main/example/docker-compose/otel-collector/docker-compose.yaml 
+
+cero-t/spring-store-2022
+https://github.com/cero-t/spring-store-2022
+Spring Boot 3.0アプリケーションをGrafanaスタックで可視化してみた。 - 谷本 心 in せろ部屋
+https://cero-t.hatenadiary.jp/entry/2023/01/10/163547
+
+★marcingrzejszczak/observability-boot-blog-post
+https://github.com/marcingrzejszczak/observability-boot-blog-post
+
+----↓これをやってみよう！registry-prometheusを使ってcollectorでpullしてexportするのが正解な気がしてきた
+★backend-academy-2025-spring/Java/seminar13 at main - central-university-dev/backend-academy-2025-spring
+https://github.com/central-university-dev/backend-academy-2025-spring/tree/main/Java/seminar13
+★grafana/docker-otel-lgtm  OpenTelemetry backend in a Docker image
+https://github.com/grafana/docker-otel-lgtm
+★OpenTelemetry と Prometheus #prometheus - Qiita
+https://qiita.com/AoTo0330/items/ae23848595c137896994
+----
+opentelemetry-demo/src/otel-collector/otelcol-config.yml at main - open-telemetry/opentelemetry-demo
+https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otel-collector/otelcol-config.yml
+
 ■index
 ●パッケージング
 Spring Boot アプリケーションのパッケージング :: Spring Boot - リファレンス
@@ -36,6 +144,15 @@ java -XX:AOTCache=app.aot -jar msa-spring-rms-remote-resources.jar
   実行可能アーカイブのパッケージ化 :: Spring Boot - リファレンス
   https://spring.pleiades.io/spring-boot/maven-plugin/packaging.html#packaging.examples.exclude-dependency
 
+ネタ：素のTestcontainerとSpringのTestcontainerの違いを理解する
+    ↓重要
+    Testcontainers のベスト プラクティス | Docker
+    https://www.docker.com/ja-jp/blog/testcontainers-best-practices/
+ネタ：オレオレ@ServiceConnectionを作ってみる
+ネタ：ComposeContainerを使ってみる
+
+docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d --rm postgres:16-alpine
+
 
 Maven4
 ---
@@ -49,6 +166,11 @@ Maven4
      不要なスナップショットが溜まっていくので、packコマンドでやるのと大差ない
 ・google buildpacksを使ってみる
   ⇒ 同じバージョンの古いイメージを削除するようにする
+
+・jsepcifyとSonarQubeを使ってみる
+
+
+・MapStutctを使ってみる
 
 ・jlinkを理解する
 ・@ServiceConnectionのプロパティを書き換える仕組みを理解する

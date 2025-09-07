@@ -264,7 +264,10 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <!-- ubar-jarではなく通常のjarをリポジトリに登録されるようにする -->
+                        <!--
+                            ubar-jarではなく通常のjarをリポジトリに登録されるようにする
+                            attachはuber-jarを通常のjarと一緒にmavenに登録するかの設定
+                        -->
                         <attach>false</attach>
                         <classifier>uber</classifier>
                         <excludes>
