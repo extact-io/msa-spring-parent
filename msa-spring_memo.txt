@@ -42,6 +42,8 @@ TODO
 4701
 17175
 
+■ブログネタ
+2025 Spring Boot で OpenTelemetryフルスタックとか
 
 ■ otel-collectorのreceiverのendpoint
 ・gRPCはパスは不要だが、httpは下記の/v1のパスが必要
@@ -52,6 +54,7 @@ TODO
 ■ SpringBootのOtelの設定
 ・otel.exporter.otlp.endpointなどのOTELの設定は management.otel.*にマッピングされている
 ・Spring BootのautoconfigurationのOtlpLoggingConfigurationsとかあたりを見ると分かる
+・RestClientで対向システムにtraceIdを引き継ぐには RestClient.Builder インスタンスを自分で RestClient.build()で作るのではなく、SpringBootでインジェクションでもらうようにする 
 
 
 ■ micrometer-tracing-bridge-otel
