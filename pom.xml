@@ -58,6 +58,8 @@
         <version.lib.commons-lang>3.17.0</version.lib.commons-lang>
         <version.lib.commons-csv>1.13.0</version.lib.commons-csv>
         <version.lib.logback-access>2.0.6</version.lib.logback-access>
+        <version.lib.otel.logback-appender>2.15.0-alpha</version.lib.otel.logback-appender>
+        <version.lib.ds-observation>1.1.2</version.lib.ds-observation>
         <version.lib.text-io>3.4.1</version.lib.text-io>
 
         <!-- maven plugin versions -->
@@ -140,6 +142,16 @@
                 <groupId>ch.qos.logback.access</groupId>
                 <artifactId>logback-access-tomcat</artifactId>
                 <version>${version.lib.logback-access}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-logback-appender-1.0</artifactId>
+                <version>${version.lib.otel.logback-appender}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.ttddyy.observation</groupId>
+                <artifactId>datasource-micrometer-spring-boot</artifactId>
+                <version>${version.lib.ds-observation}</version>
             </dependency>
             <dependency>
                 <groupId>org.bitbucket.b_c</groupId>

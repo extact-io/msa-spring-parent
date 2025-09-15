@@ -1,4 +1,11 @@
 TODO
+・OpenTelemetryAppenderとかのBean登録のところをきれいにする
+・console側のobservabilityのdependencyを親に持っていく
+・OpentelemetryのAppender登録を共通に
+・observabilityのdependencyは@ConditionalOnでインスタンス化しないようにできるか確認
+・テストケースを仕上げる
+
+
 ・prometeusのスクレイピングとotlpで採れるシグナルの違いを確認し、理由をしらべてみる
     → メトリクス名が違う問題。Prometeus向けのGrafanaのダッシュボードを書き換えるかな。
     → メトリクス名ってどこでどうやって決めてるんだろ？
@@ -63,6 +70,12 @@ TODO
            Micrometer tracingインターフェースの実体にはOTELのTraceやSpanが使われるようになる
     → micrometer-tracing-bridge-otelはtraceテレメトリの実体をMicrometer traceではなくOTELのテレメトリに切り替える
        モジュール的な意味を持っている
+
+DefaultRestClient$DefaultRequestBodyUriSpec#exchangeInternal()
+    Observation.createNotStarted
+        PropagatingReceiverTracingObservationHandler
+        PropagatingSenderTracingObservationHandler
+    @Observedを使うにはAspectクラスをBean登録するのを忘れない！
 
 opentelemetry-exporter-otlp
     → OTELのテレメトリをOpenTelemetry Protocol(OTLP)に変換して送信するexporter。OTLPを受け入れられる相手に利用するもの
@@ -161,6 +174,7 @@ Maven4
 ---
 今後のTODO
 ---
+・可観測性など共通に出てくる設定のデフォルトはConfigPropertiesかなにかまとめよう
 ・profileでローカルはdocker-pluginsでdocker buildにして、CIではspring-bootコマンドでやろう
 ・ローカルでイメージを作成するのはdocker buildが一番早くていいな
   ⇒ docker-pluginsでやるようにしておこう
