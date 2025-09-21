@@ -5,7 +5,6 @@ TODO
 ・observabilityのdependencyは@ConditionalOnでインスタンス化しないようにできるか確認
 ・テストケースを仕上げる
 
-
 ・prometeusのスクレイピングとotlpで採れるシグナルの違いを確認し、理由をしらべてみる
     → メトリクス名が違う問題。Prometeus向けのGrafanaのダッシュボードを書き換えるかな。
     → メトリクス名ってどこでどうやって決めてるんだろ？
@@ -169,23 +168,19 @@ java -XX:AOTCache=app.aot -jar msa-spring-rms-remote-resources.jar
 
 docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d --rm postgres:16-alpine
 
+Observability With Spring Boot | Baeldung
+https://www.baeldung.com/spring-boot-3-observability
+How to Enable All Endpoints in Spring Boot Actuator | Baeldung
+https://www.baeldung.com/spring-boot-actuator-enable-endpoints
 
 Maven4
 ---
 今後のTODO
 ---
-・可観測性など共通に出てくる設定のデフォルトはConfigPropertiesかなにかまとめよう
-・profileでローカルはdocker-pluginsでdocker buildにして、CIではspring-bootコマンドでやろう
-・ローカルでイメージを作成するのはdocker buildが一番早くていいな
-  ⇒ docker-pluginsでやるようにしておこう
-・CI/CDではspring-bootコマンドで
-  ⇒ 再現性はそもそもjarが作り直されたら失われる。なので結局のところ内容が変わってない定時ビルドでも
-     不要なスナップショットが溜まっていくので、packコマンドでやるのと大差ない
-・google buildpacksを使ってみる
-  ⇒ 同じバージョンの古いイメージを削除するようにする
+・ReadinessProbeRestClientFactoryImplのRestClientをinjectionで取得する←traceIdの伝播
 
+・Java25化
 ・jsepcifyとSonarQubeを使ってみる
-
 
 ・MapStutctを使ってみる
 
@@ -216,6 +211,15 @@ Maven4
 ・クライアントはJHipseteとかローコードで刷新とかもいいかも
 
 ===> Done
+・profileでローカルはdocker-pluginsでdocker buildにして、CIではspring-bootコマンドでやろう
+・ローカルでイメージを作成するのはdocker buildが一番早くていいな
+・CI/CDではspring-bootコマンドで
+  ⇒ 再現性はそもそもjarが作り直されたら失われる。なので結局のところ内容が変わってない定時ビルドでも
+     不要なスナップショットが溜まっていくので、packコマンドでやるのと大差ない
+・google buildpacksを使ってみる
+  ⇒ 同じバージョンの古いイメージを削除するようにする
+
+・可観測性など共通に出てくる設定のデフォルトはConfigPropertiesかなにかまとめよう
 ・uiとwebを入れいる。infrastructureにはjpa,file, remote(インメモリ)の3つにして、ほんとの丸を囲ったオニオンにしよう！
     ⇒ リモートは簡単なインメモリにしよう！分散トレースや認証情報の引き渡し、例外ハンドリング(重複チェックくらいでいいか)とかそこら辺がやりたいだけだったので
        ビジネスロジック的なものは最低限なものにしよう
