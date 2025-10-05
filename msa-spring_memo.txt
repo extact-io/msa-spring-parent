@@ -193,9 +193,16 @@ https://www.baeldung.com/spring-boot-actuator-enable-endpoints
 Maven4
 
 
+■@Asyncで諸々コンテキストを伝播させる
+・ObervationContext
+・SecurityContext
+・MDCContext
 
 SpringBootでAsyncを使う時に知っておきたいExecutorのこと - 日々常々
 https://irof.hateblo.jp/entry/2023/08/24/221215
+
+Micrometer Context Propagation について
+https://zenn.dev/be_hase/articles/17b3b8c8109635
 
 ---
 今後のTODO
@@ -212,6 +219,8 @@ https://irof.hateblo.jp/entry/2023/08/24/221215
 
 ・Customizerを使う
     → WebSecurityCustomizerとかRestClientCustomizerとか
+    → オレオレBean のカスタマイズ方法はObservationRegistryConfigurer + ObservationRegistryCustomizerを参考にするといいかも
+
 ・makingさんのを参考にCustomizerを深掘りしてみる
 
 ・BusinessDateを作ってもいいかも←業務日付のだな
