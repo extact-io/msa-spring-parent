@@ -23,6 +23,10 @@ TODO
 ・clientの方もすべてcollector経由にする。ただし、metricsはprometeusreceiver方式でtraceとlogsはgRPCにする
 
 
+イメージ
+・普通のメッセージングシステム：蛇口からコップに注ぐ水
+・Kafka：消防ホースで街路に水を撒くレベルの水圧（≒イベント量）に耐えられる
+
 ■ Spring Bootのlogback連携
 ・前提
     - logback.xmlからは${foo}としてシステムプロパティを参照できる
@@ -207,9 +211,12 @@ https://zenn.dev/be_hase/articles/17b3b8c8109635
 ---
 今後のTODO
 ---
-・ReadinessProbeRestClientFactoryImplのRestClientをinjectionで取得する←traceIdの伝播
+20352
 
-・Java25化
+・Java25化＋Eclipse
+・Maven4化
+・JUnit6化
+
 ・jsepcifyとSonarQubeを使ってみる
 
 ・MapStutctを使ってみる
@@ -269,6 +276,8 @@ https://zenn.dev/be_hase/articles/17b3b8c8109635
 
 ■ 直近TODO
 ===> Done
+・ReadinessProbeRestClientFactoryImplのRestClientをinjectionで取得する←traceIdの伝播
+
 ・pomの整理・整頓(dependencyとか)
 ・ライブラリの最新化
 ・ModelUpdaterとかにして今フィールド名で渡してるのをsetterのメソッド参照を渡してもいいかも。setterはLombokでprivateで作ればいいし
