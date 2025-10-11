@@ -124,6 +124,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.extact</groupId>
+                <artifactId>msa-spring-rms-ui-console-test</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${version.lib.commons-lang}</version>
