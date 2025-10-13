@@ -212,6 +212,7 @@ https://zenn.dev/be_hase/articles/17b3b8c8109635
 今後のTODO
 ---
 20352
+・controllerとserviceとrepositoryにObservedをつける。connectionのメトリクスを採らないようにする
 
 ・Java25化＋Eclipse
 ・Maven4化
@@ -250,6 +251,7 @@ https://zenn.dev/be_hase/articles/17b3b8c8109635
 ・クライアントはJHipseteとかローコードで刷新とかもいいかも
 
 ===> Done
+・@ReadOnlyをつける
 ・profileでローカルはdocker-pluginsでdocker buildにして、CIではspring-bootコマンドでやろう
 ・ローカルでイメージを作成するのはdocker buildが一番早くていいな
 ・CI/CDではspring-bootコマンドで
