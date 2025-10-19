@@ -1,3 +1,10 @@
+@RmsRestController
+@ApplicationService
+@DomainService
+
+GenericRepository
+
+
 TODO
 ・OpenTelemetryAppenderとかのBean登録のところをきれいにする
 ・console側のobservabilityのdependencyを親に持っていく
@@ -207,6 +214,11 @@ https://irof.hateblo.jp/entry/2023/08/24/221215
 
 Micrometer Context Propagation について
 https://zenn.dev/be_hase/articles/17b3b8c8109635
+
+
+■セキュリティチェック
+Spring Securityよく使用するアノテーション&メソッド #SpringBoot - Qiita
+https://qiita.com/JK447/items/4e60948ab5fa1b2b931d
 
 ---
 今後のTODO
