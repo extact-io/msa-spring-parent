@@ -1,7 +1,7 @@
-@RmsRestController
+@ApiController
 @ApplicationService
-@DomainService
-
+@DomainServiceObserved
+@DomainRepositryObserved
 GenericRepository
 
 
