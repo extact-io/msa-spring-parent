@@ -224,7 +224,12 @@ https://qiita.com/JK447/items/4e60948ab5fa1b2b931d
 今後のTODO
 ---
 20352
-・controllerとserviceとrepositoryにObservedをつける。connectionのメトリクスを採らないようにする
+・VirtualThread化の確認
+    Project Loom + Spring Boot 3.x: 仮想スレッドが2025年にマイクロサービスをどのように変革するか | CodeTalks | 2025年11月 | JavaScript in Plain English
+    https://javascript.plainenglish.io/project-loom-spring-boot-3-x-how-virtual-threads-will-transform-your-microservices-in-2025-5f14001856f5
+    Springでの仮想スレッドの操作 | Baeldung
+    https://www.baeldung.com/spring-6-virtual-threads
+
 
 ・Java25化＋Eclipse
 ・Maven4化
@@ -235,7 +240,7 @@ https://qiita.com/JK447/items/4e60948ab5fa1b2b931d
 ・MapStutctを使ってみる
 
 ・jlinkを理解する
-・@ServiceConnectionのプロパティを書き換える仕組みを理解する
+
 
 ・Customizerを使う
     → WebSecurityCustomizerとかRestClientCustomizerとか
@@ -286,6 +291,8 @@ https://qiita.com/JK447/items/4e60948ab5fa1b2b931d
 ・BuildpacksでCDSを使ってみる
     - デベロッパーサイトネタ：対向システムを@Testcontainersを使って起動するときにDynamicPropertySourceを使わず動的にホスト：ポートを登録する
 ・ItemとUserが削除されたらイベントを発火させる
+・@ServiceConnectionのプロパティを書き換える仕組みを理解する
+・レイヤ境界を自動でObservedするようにする
 
 
 ■ 直近TODO
