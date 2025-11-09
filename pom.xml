@@ -85,7 +85,6 @@
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.basedir}/../rms-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
-        <!-- workaround for required 1.18.38 with JDK 24 -->
         <lombok.version>1.18.42</lombok.version>
         <!-- workaround for https://github.com/TNG/ArchUnit/issues/1442 -->
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
