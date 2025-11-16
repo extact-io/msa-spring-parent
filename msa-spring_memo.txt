@@ -224,14 +224,31 @@ https://qiita.com/JK447/items/4e60948ab5fa1b2b931d
 今後のTODO
 ---
 20352
-・VirtualThread化の確認
-    Project Loom + Spring Boot 3.x: 仮想スレッドが2025年にマイクロサービスをどのように変革するか | CodeTalks | 2025年11月 | JavaScript in Plain English
-    https://javascript.plainenglish.io/project-loom-spring-boot-3-x-how-virtual-threads-will-transform-your-microservices-in-2025-5f14001856f5
-    Springでの仮想スレッドの操作 | Baeldung
-    https://www.baeldung.com/spring-6-virtual-threads
+
+・JWT認証の後にログイン情報をRedisを使って復元する
+  → ユーザ付随的な情報はAuthenticate#setDtailsに入れるのがSpringのお作法的に正解な気がする
+  → RmsAuthenticationにオレオレのLoginUserを持てるようにするRmsAuthentication<T extends LoginUser>で型パラメータを導入するのがいい気がする
+
+・ユーザ付随情報をキャッシュする（キーだけで後の情報をキャッシュから）
+・BusinessDateを作ってもいいかも←業務日付のだな
+
+・エラーレスポンスがRFCで標準化されていた！ので標準化する
+
+・OpneAPIで定義
 
 
-・Java25化＋Eclipse
+
+・Spring Boot4移行
+
+・fault torelenceを使う
+
+
+
+・ClientHttpRequestとClientHttpResponseをクルクル回してFactoryを1つでいいようにする
+    → CustomizableClientRequestのところ
+
+
+
 ・Maven4化
 ・JUnit6化
 
@@ -248,24 +265,18 @@ https://qiita.com/JK447/items/4e60948ab5fa1b2b931d
 
 ・makingさんのを参考にCustomizerを深掘りしてみる
 
-・BusinessDateを作ってもいいかも←業務日付のだな
 
-・JWT認証の後にログイン情報をRedisを使って復元する
-  → ユーザ付随的な情報はAuthenticate#setDtailsに入れるのがSpringのお作法的に正解な気がする
-  → RmsAuthenticationにオレオレのLoginUserを持てるようにするRmsAuthentication<T extends LoginUser>で型パラメータを導入するのがいい気がする
-・ユーザ付随的なものの使いどころとして更新・追加のタイムスタンプを付けておく
-・LoginIdと会員種別をユーザ付随情報な感じで持てるようにする
 ・OAuth2（auth0とkeycloakを使ってみる）
-
-・OpneAPIで定義
-
-・ClientHttpRequestとClientHttpResponseをクルクル回してFactoryを1つでいいようにする
-    → CustomizableClientRequestのところ
 
 ・Configの整理
     アプリからみた可変部分をMicroProfileのときのように外に出しにしておく
         ・private-key: classpath:/jwt.key←とか
 ・クライアントはJHipseteとかローコードで刷新とかもいいかも
+
+・起動時のdocker compose連携を使ってみる
+    Spring Boot 3.1でサポートされたDocker Composeとの統合機能を試してみる - daisuzz.log
+    https://iikanji.hatenablog.jp/entry/2024/02/28/214844
+
 
 ===> Done
 ・@ReadOnlyをつける
@@ -293,6 +304,15 @@ https://qiita.com/JK447/items/4e60948ab5fa1b2b931d
 ・ItemとUserが削除されたらイベントを発火させる
 ・@ServiceConnectionのプロパティを書き換える仕組みを理解する
 ・レイヤ境界を自動でObservedするようにする
+
+・Java25化＋Eclipse
+・VirtualThread化の確認
+    Project Loom + Spring Boot 3.x: 仮想スレッドが2025年にマイクロサービスをどのように変革するか | CodeTalks | 2025年11月 | JavaScript in Plain English
+    https://javascript.plainenglish.io/project-loom-spring-boot-3-x-how-virtual-threads-will-transform-your-microservices-in-2025-5f14001856f5
+    Springでの仮想スレッドの操作 | Baeldung
+    https://www.baeldung.com/spring-6-virtual-threads
+    Spring Boot 3.2でサポートされたVirtual Threadsを試してみる - daisuzz.log
+    https://iikanji.hatenablog.jp/entry/2024/02/26/171731
 
 
 ■ 直近TODO
