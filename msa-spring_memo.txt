@@ -224,30 +224,24 @@ https://qiita.com/JK447/items/4e60948ab5fa1b2b931d
 今後のTODO
 ---
 20352
-
 ・JWT認証の後にログイン情報をRedisを使って復元する
-  → ユーザ付随的な情報はAuthenticate#setDtailsに入れるのがSpringのお作法的に正解な気がする
-  → RmsAuthenticationにオレオレのLoginUserを持てるようにするRmsAuthentication<T extends LoginUser>で型パラメータを導入するのがいい気がする
+    → RmsAuthenticationにオレオレのLoginUserを持てるようにするRmsAuthentication<T extends LoginUser>で型パラメータを導入するのがいい気がする
 
 ・ユーザ付随情報をキャッシュする（キーだけで後の情報をキャッシュから）
+    Supercharging Spring Boot Apps with Caffeine & Redis Caching Strategies | by Balian's techologies and innovation lab | Medium
+    https://medium.com/@ShantKhayalian/supercharging-spring-boot-apps-with-caffeine-redis-caching-strategies-f97a939142ff
+
 ・BusinessDateを作ってもいいかも←業務日付のだな
-
 ・エラーレスポンスがRFCで標準化されていた！ので標準化する
-
 ・OpneAPIで定義
 
-
-
 ・Spring Boot4移行
-
 ・fault torelenceを使う
 
-
+・User情報が変わったらそれぞれのインスタンスにnotifyして認証ユーザの情報をupdateする（Messagingを使ってみよう）
 
 ・ClientHttpRequestとClientHttpResponseをクルクル回してFactoryを1つでいいようにする
     → CustomizableClientRequestのところ
-
-
 
 ・Maven4化
 ・JUnit6化
@@ -279,6 +273,9 @@ https://qiita.com/JK447/items/4e60948ab5fa1b2b931d
 
 
 ===> Done
+・SpringSecurityのお作法としてLoginUserはPrincipalの実際に相当するので、AuthenticateTokeにはprincipalとLoginUserを別々に持つのではなく。LoginUserをprincipal
+  として持つのが正解
+  → TODO 実装は凡そできたので、AttributesProviderインスタンスのConfigのところから
 ・@ReadOnlyをつける
 ・profileでローカルはdocker-pluginsでdocker buildにして、CIではspring-bootコマンドでやろう
 ・ローカルでイメージを作成するのはdocker buildが一番早くていいな
