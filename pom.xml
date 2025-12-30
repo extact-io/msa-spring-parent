@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.5</version>
+        <version>3.5.9</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.extact</groupId>
@@ -55,6 +55,7 @@
         <version.lib.auth0jwt>4.5.0</version.lib.auth0jwt>
         <version.lib.assertj>3.27.3</version.lib.assertj>
         <version.lib.archunit>1.4.1</version.lib.archunit>
+        <version.lib.awaitility>4.3.0</version.lib.awaitility>
         <version.lib.commons-lang>3.17.0</version.lib.commons-lang>
         <version.lib.commons-csv>1.13.0</version.lib.commons-csv>
         <version.lib.logback-access>2.0.6</version.lib.logback-access>
@@ -177,6 +178,11 @@
                 <artifactId>archunit-junit5</artifactId>
                 <version>${version.lib.archunit}</version>
             </dependency>
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>${version.lib.awaitility}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -189,6 +195,12 @@
         <dependency>
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

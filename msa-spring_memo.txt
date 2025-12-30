@@ -1,22 +1,3 @@
-@ApiController
-@ApplicationService
-@DomainServiceObserved
-@DomainRepositryObserved
-GenericRepository
-
-
-TODO
-・OpenTelemetryAppenderとかのBean登録のところをきれいにする
-・console側のobservabilityのdependencyを親に持っていく
-・OpentelemetryのAppender登録を共通に
-・observabilityのdependencyは@ConditionalOnでインスタンス化しないようにできるか確認
-・テストケースを仕上げる
-
-・prometeusのスクレイピングとotlpで採れるシグナルの違いを確認し、理由をしらべてみる
-    → メトリクス名が違う問題。Prometeus向けのGrafanaのダッシュボードを書き換えるかな。
-    → メトリクス名ってどこでどうやって決めてるんだろ？
-・独自のSpanやメトリクスも取得してみる
-
 ・GoogleCloudに送ってみる
     Telemetry API がリリースされたので OTLP で Google Cloud にスパンを送ってみた
     https://zenn.dev/cloud_ace/articles/9da89c5286ad60
@@ -220,33 +201,55 @@ https://zenn.dev/be_hase/articles/17b3b8c8109635
 Spring Securityよく使用するアノテーション&メソッド #SpringBoot - Qiita
 https://qiita.com/JK447/items/4e60948ab5fa1b2b931d
 
+■ RedisでObjectをJSONシリアライズするときの注意
+・ユーザ付随とかはドメインオブジェクトなので導出のプロパティメソッドのisXXXXとか持ちたくなる
+・が、JSONシリアライズされるときにそのまま出力され、デシリアライズでエラーになるので注意すること
+・isXXXXとか導出のプロパティメソッドを持つ場合は、カスタムの（デ）シリアライザーを使って対応する
+
+■Supercharging Spring Boot Apps with Caffeine & Redis Caching Strategies | by Balian's techologies and innovation lab | Medium
+https://medium.com/@ShantKhayalian/supercharging-spring-boot-apps-with-caffeine-redis-caching-strategies-f97a939142ff
+
+docker run -d --name redisinsight -p 5540:5540 redis/redisinsight:latest
+
 ---
 今後のTODO
 ---
 20352
-・JWT認証の後にログイン情報をRedisを使って復元する
-    → RmsAuthenticationにオレオレのLoginUserを持てるようにするRmsAuthentication<T extends LoginUser>で型パラメータを導入するのがいい気がする
 
+・CachePropertiesを使ったRedisとCaffeinのオレオレコンフィグレーション化
 ・ユーザ付随情報をキャッシュする（キーだけで後の情報をキャッシュから）
-    Supercharging Spring Boot Apps with Caffeine & Redis Caching Strategies | by Balian's techologies and innovation lab | Medium
-    https://medium.com/@ShantKhayalian/supercharging-spring-boot-apps-with-caffeine-redis-caching-strategies-f97a939142ff
+・テスト。
+    ・キャッシュの実装を切り替えて有効期限切れのログをキャプチャしてassertしてみる
+    ・ユーザ付随から情報をとれるか確認
+    ・Clientからのテスト（loginUserAttributesはPostgresが起動するようにする）
+    
+・設定のの動的な変更機能を考えてみよう！
+    Spring Boot Context Refresh in Cloud | Medium
+    https://medium.com/@AlexanderObregon/how-spring-boot-handles-application-context-refresh-in-cloud-environments-8d40ae6a1979
+
 
 ・BusinessDateを作ってもいいかも←業務日付のだな
 ・エラーレスポンスがRFCで標準化されていた！ので標準化する
+・DBの共通項目の設定
+    Stop manually setting the time! JPA handles it all with a single annotation! | by Umesh Kumar Yadav | Nov, 2025 | Stackademic
+    https://medium.com/stackademic/stop-manually-setting-the-time-jpa-handles-it-all-with-a-single-annotation-5b4df8728d19
 ・OpneAPIで定義
+・AIによる画面の作成！
 
-・Spring Boot4移行
-・fault torelenceを使う
-
-・User情報が変わったらそれぞれのインスタンスにnotifyして認証ユーザの情報をupdateする（Messagingを使ってみよう）
-
-・ClientHttpRequestとClientHttpResponseをクルクル回してFactoryを1つでいいようにする
-    → CustomizableClientRequestのところ
+ー＞次バージョンに向けてにして、↑までで一旦のゴールにしよう
 
 ・Maven4化
 ・JUnit6化
 
+・Spring Boot4移行
+・fault torelenceを使う
+
 ・jsepcifyとSonarQubeを使ってみる
+
+・ClientHttpRequestとClientHttpResponseをクルクル回してFactoryを1つでいいようにする
+    → CustomizableClientRequestのところ
+・User情報が変わったらそれぞれのインスタンスにnotifyして認証ユーザの情報をupdateする（Messagingを使ってみよう）
+
 
 ・MapStutctを使ってみる
 
@@ -271,8 +274,11 @@ https://qiita.com/JK447/items/4e60948ab5fa1b2b931d
     Spring Boot 3.1でサポートされたDocker Composeとの統合機能を試してみる - daisuzz.log
     https://iikanji.hatenablog.jp/entry/2024/02/28/214844
 
+・Cucumber・Gherkin・Playwright or APiテストとかを考えてみる
 
 ===> Done
+・JWT認証の後にログイン情報をRedisを使って復元する
+    → RmsAuthenticationにオレオレのLoginUserを持てるようにするRmsAuthentication<T extends LoginUser>で型パラメータを導入するのがいい気がする
 ・SpringSecurityのお作法としてLoginUserはPrincipalの実際に相当するので、AuthenticateTokeにはprincipalとLoginUserを別々に持つのではなく。LoginUserをprincipal
   として持つのが正解
   → TODO 実装は凡そできたので、AttributesProviderインスタンスのConfigのところから
@@ -311,6 +317,10 @@ https://qiita.com/JK447/items/4e60948ab5fa1b2b931d
     Spring Boot 3.2でサポートされたVirtual Threadsを試してみる - daisuzz.log
     https://iikanji.hatenablog.jp/entry/2024/02/26/171731
 
+・host.docker.internalがなんなんだかを確認しよう！
+・MethodSourceを使って他の継承を使ったテストもエクセレントに？
+・テスト並列実行
+    ⇒ やったけど、37秒が33秒くらいしか速くならなかった
 
 ■ 直近TODO
 ===> Done
@@ -367,6 +377,7 @@ https://qiita.com/JK447/items/4e60948ab5fa1b2b931d
 ・ログインの認証失敗時のエラーレスポンスのStatusCodeは401にするのが妥当
       →LoginFailedExceptionを作ってそれをサービスから投げて、
       →独自のExceptionHanlderを使ってハンドルさせるようにしよう！
+
 
 ■ Java新機能調査・使いたいテーマ
 ◎JEP 456: 無名変数とパターン
