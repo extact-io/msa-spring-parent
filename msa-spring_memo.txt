@@ -211,6 +211,27 @@ https://medium.com/@ShantKhayalian/supercharging-spring-boot-apps-with-caffeine-
 
 docker run -d --name redisinsight -p 5540:5540 redis/redisinsight:latest
 
+
+■ Authenticationのインジェクション
+@AuthenticationPrincipalの場合はAnonymousでもインジェクションされるが、
+Authenticationインタフェースの場合、Anonymousはnullになる 
+    ⇒ ServletRequestMethodArgumentResolver#resolveArgument 
+    ⇒ SecurityContextHolderAwareRequestWrapper#getUserPrincipal
+なので、RestControllerで取得する場合は@AuthenticationPrincipalで取得するのが正解と思われる
+    @PutMapping
+    void call(@AuthenticationPrincipal LoginUser loginUser) {
+
+
+■ ServiceConnectionを使った複数接続先
+・@ServiceConnectionを使って(JdbcConnectionDetailsなど)同じ種類の接続先を複数同時に使うことはできない
+・ServiceConnectionを使った接続先設定はAutoConfigurationで解決されるが、AutoConfigurationは簡易設定のため、
+  ServiceConnection以外も含め同じものが複数ある場合の使い分けは考慮されていない
+・AutoConfigurationは@ConditionalOnBeanや@ConditionalOnMissingBeanなどのある型のBeanがあるかないかで条件を
+  絞っていて、存在する場合は利用者側でJavaConfigにより手動で設定することが基本となる
+・ServiceConnectionもこれと同じように接続先を表すConnectionDetailsの型が同じインスタンスが複数ある場合、
+  どっちを使うか決定できなくなる。
+・よって、ServiceConnectionもAutoConfigurationと同じように複数の接続先を同時に扱うことはできない
+
 ---
 今後のTODO
 ---
