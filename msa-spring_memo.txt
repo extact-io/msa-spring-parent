@@ -1,3 +1,20 @@
+■ JJUG CCCネタ
+・Customizerを使るようになろう！
+    - AutoConfigureはCustomizerが多用されているのでcustomizerがわかるとautoconfigが見えてくる
+    - どんな仕組みで、どんな用途で使われるのかを説明した後によくcustomizerが使われる、使いたくなる以下のBeanに対してCustomizerを定義＆適用しながら使い方を理解してもらいます
+        - 基本中の基本ObjectMapper
+            そもそも皆さん、ObjectMapperを場当たり的にnewしてませんか？こっちの機能ではこうやってシリアライズされたけどあっちはなんか違う・・とかなります。
+            キチンと必要な用途(パターン)分のObjectMapperをCustomizerで定義して複数機能で共有できるようにしましょう
+            RestControllerで使っているのとはちょっと違う書式が必要なった場合、どうしますか？Springはメインを@primaryで定義している
+        - RestClient
+        - RestClientの複数接続先
+
+    - Customizerの基本的な仕組み → Builderがあって、それをツンツンするのがCustomizer
+        - なぜあるか？それは自分のデフォルトを他人がカスタマイズできるようにするため
+        - 逆にいうと、自分の好みの設定で構成したBeanを他人につかってもらって、1部分だけ変えたいといわれたどうします？
+        - そこで登場するのがCustomizerですが。ですので、FWとか共通部品作っている人はCustomizerが必要となりますが、アプリが作ることはない。なんだけど、それがなんなのかの理解は必要で重要。
+        
+
 ・GoogleCloudに送ってみる
     Telemetry API がリリースされたので OTLP で Google Cloud にスパンを送ってみた
     https://zenn.dev/cloud_ace/articles/9da89c5286ad60
@@ -244,6 +261,12 @@ Authenticationインタフェースの場合、Anonymousはnullになる
 ---
 20352
 
+・Customizerの↓をつかった整理整頓
+    SimpleRestClientCustomizerConfig
+    ーーー
+    RestClientを自分で作っているところを検索して、今回使ったConfigに置き換えていく
+    → 2026/01/12 はエラーになる中途半端で終わってるので注意
+    
 ・CachePropertiesを使ったRedisとCaffeinのオレオレコンフィグレーション化
 ・ユーザ付随情報をキャッシュする（キーだけで後の情報をキャッシュから）
 ・テスト。
@@ -252,20 +275,27 @@ Authenticationインタフェースの場合、Anonymousはnullになる
     ・Clientからのテスト（loginUserAttributesはPostgresが起動するようにする）
 
 ・ObjectMapperの一元化
-    - Redisに書き込むときのユーザ付随のデ/シリアライズに利用するMapper
+    OK- Redisに書き込むときのユーザ付随のデ/シリアライズに利用するMapper
         RmsLoginUserAttributesSerializer
+            → @RedisObjectMapperで@Primaryとは別のmapperを使うようにする
 
-    - RESTサーバでセキュリティFilterエラーになった際のエラーレスポンスのbodyのシリアライズに利用するMapper
+    OK- RESTサーバでセキュリティFilterエラーになった際のエラーレスポンスのbodyのシリアライズに利用するMapper
         SecurityFallbackExceptionFilter
             → @Primaryを使うようにする
-    - RESTサーバの正常レスポンスのbodyのシリアライズに利用するMapper
+    OK- RESTサーバの正常レスポンスのbodyのシリアライズに利用するMapper
         → Jackson2ObjectMapperBuilderでconfigure
+            → Jackson2ObjectMapperBuilderCustomizerは@PrimaryのObjectMapperに対して作用する
+            → ConfigでJackson2ObjectMapperBuilderCustomizerはListで取得するので、Qualifireが付けているBeanにも
+               含まれるので注意すること。@
+            → @Primaryとは別に作用するCustomizerを作りたい場合は継承関係のない別物のインターフェースを用意する
+            → PrimaryObjectMapperConfig
             → ここから作られたObjectMapperが@Primaryになっている
 
     - RESTクライアントのエラーレスポンスのbodyのデシリアライズに利用するMapper
         ErrorMessageDeserializer
     - RESTクライアントの正常レスポンスのbodyのデシリアライズに利用するMapper
         ConfigMessageConveterBuilder
+            → RestClientObjectMapperCustomizerで生成
 
     - RemoteアプリケーションのJSON初期データのデシリアライズに利用するMapper
         InMemoryRepository
