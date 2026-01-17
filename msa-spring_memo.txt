@@ -423,7 +423,10 @@ Authenticationインタフェースの場合、Anonymousはnullになる
             spring.mvc.format.date-time
 
         RestClientのフォーマットはRestClientを生で使うときはUriBuilderFactoryが使われ
-        HttpInterface経由で使う場合は、@PathVariableと@RequestParamのすべてフォーマットはHttpServiceProxyFactory#conversionServiceが使われる
+        HttpInterface経由で使う場合は、@PathVariableと@RequestParamのすべてフォーマットはUriBuilderFactoryではなく
+        HttpServiceProxyFactory#conversionServiceが使われる。
+        このため、RestClientを単独で使うことがない場合は、HttpServiceProxyFactory#conversionServiceだけにConversionServiceを
+        設定していても問題はないが、念のため同じものを設定しておく
             --------
             UriBuilderFactory uriFactory = customUriBuilderFactory(env);
             ConversionService conversionService = customConversionService();
