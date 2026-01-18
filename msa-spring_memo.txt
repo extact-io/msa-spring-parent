@@ -260,47 +260,12 @@ Authenticationインタフェースの場合、Anonymousはnullになる
 今後のTODO
 ---
 20352
-
-・Customizerの↓をつかった整理整頓
-    SimpleRestClientCustomizerConfig
-    ーーー
-    RestClientを自分で作っているところを検索して、今回使ったConfigに置き換えていく
-    → 2026/01/12 はエラーになる中途半端で終わってるので注意
-    
 ・CachePropertiesを使ったRedisとCaffeinのオレオレコンフィグレーション化
 ・ユーザ付随情報をキャッシュする（キーだけで後の情報をキャッシュから）
 ・テスト。
     ・キャッシュの実装を切り替えて有効期限切れのログをキャプチャしてassertしてみる
     ・ユーザ付随から情報をとれるか確認
-    ・Clientからのテスト（loginUserAttributesはPostgresが起動するようにする）
-
-・ObjectMapperの一元化
-    OK- Redisに書き込むときのユーザ付随のデ/シリアライズに利用するMapper
-        RmsLoginUserAttributesSerializer
-            → @RedisObjectMapperで@Primaryとは別のmapperを使うようにする
-
-    OK- RESTサーバでセキュリティFilterエラーになった際のエラーレスポンスのbodyのシリアライズに利用するMapper
-        SecurityFallbackExceptionFilter
-            → @Primaryを使うようにする
-    OK- RESTサーバの正常レスポンスのbodyのシリアライズに利用するMapper
-        → Jackson2ObjectMapperBuilderでconfigure
-            → Jackson2ObjectMapperBuilderCustomizerは@PrimaryのObjectMapperに対して作用する
-            → ConfigでJackson2ObjectMapperBuilderCustomizerはListで取得するので、Qualifireが付けているBeanにも
-               含まれるので注意すること。@
-            → @Primaryとは別に作用するCustomizerを作りたい場合は継承関係のない別物のインターフェースを用意する
-            → PrimaryObjectMapperConfig
-            → ここから作られたObjectMapperが@Primaryになっている
-
-    - RESTクライアントのエラーレスポンスのbodyのデシリアライズに利用するMapper
-        ErrorMessageDeserializer
-    - RESTクライアントの正常レスポンスのbodyのデシリアライズに利用するMapper
-        ConfigMessageConveterBuilder
-            → RestClientObjectMapperCustomizerで生成
-
-    - RemoteアプリケーションのJSON初期データのデシリアライズに利用するMapper
-        InMemoryRepository
-
-
+    ・Clientからのテスト（loginUserAttributesはPostgresが起動するようにする）←★上は終わっていて後はこれだけ！ここから始める！
 
 ・BusinessDateを作ってもいいかも←業務日付のだな
 ・エラーレスポンスがRFCで標準化されていた！ので標準化する
@@ -309,6 +274,8 @@ Authenticationインタフェースの場合、Anonymousはnullになる
     https://medium.com/stackademic/stop-manually-setting-the-time-jpa-handles-it-all-with-a-single-annotation-5b4df8728d19
 
 ー＞次バージョンに向けてにして、↑までで一旦のゴールにしよう
+・Spring Boot4移行
+・fault torelenceを使う
 
 ・OpneAPIで定義
 ・AIによる画面の作成！
@@ -321,8 +288,6 @@ Authenticationインタフェースの場合、Anonymousはnullになる
 ・Maven4化
 ・JUnit6化
 
-・Spring Boot4移行
-・fault torelenceを使う
 
 ・jsepcifyとSonarQubeを使ってみる
 
@@ -357,6 +322,36 @@ Authenticationインタフェースの場合、Anonymousはnullになる
 ・Cucumber・Gherkin・Playwright or APiテストとかを考えてみる
 
 ===> Done
+・ObjectMapperの一元化
+    OK- Redisに書き込むときのユーザ付随のデ/シリアライズに利用するMapper
+        RmsLoginUserAttributesSerializer
+            → @RedisObjectMapperで@Primaryとは別のmapperを使うようにする
+    ---
+    OK- RESTサーバでセキュリティFilterエラーになった際のエラーレスポンスのbodyのシリアライズに利用するMapper
+        SecurityFallbackExceptionFilter
+            → @Primaryを使うようにする
+    OK- RESTサーバの正常レスポンスのbodyのシリアライズに利用するMapper
+        → Jackson2ObjectMapperBuilderでconfigure
+            → Jackson2ObjectMapperBuilderCustomizerは@PrimaryのObjectMapperに対して作用する
+            → ConfigでJackson2ObjectMapperBuilderCustomizerはListで取得するので、Qualifireが付けているBeanにも
+               含まれるので注意すること。@
+            → @Primaryとは別に作用するCustomizerを作りたい場合は継承関係のない別物のインターフェースを用意する
+            → PrimaryObjectMapperConfig
+            → ここから作られたObjectMapperが@Primaryになっている
+    ---
+    OK- RESTクライアントの正常レスポンスのbodyのデシリアライズに利用するMapper
+        ConfigMessageConveterBuilder
+            → RestClientObjectMapperCustomizerで生成
+    OK- RESTクライアントのエラーレスポンスのbodyのデシリアライズに利用するMapper
+        ErrorMessageDeserializer
+            → RESTクライアントの正常レスポンスのbodyのデシリアライズに利用するMapperと同じものを設定
+    ---
+    OK- RemoteアプリケーションのJSON初期データのデシリアライズに利用するMapper
+        InMemoryRepository
+            → テストデータの読み込みなので、独自のMapperでOK
+
+・Customizerの↓をつかった整理整頓
+    SingleRestClientConfig
 ・JWT認証の後にログイン情報をRedisを使って復元する
     → RmsAuthenticationにオレオレのLoginUserを持てるようにするRmsAuthentication<T extends LoginUser>で型パラメータを導入するのがいい気がする
 ・SpringSecurityのお作法としてLoginUserはPrincipalの実際に相当するので、AuthenticateTokeにはprincipalとLoginUserを別々に持つのではなく。LoginUserをprincipal
