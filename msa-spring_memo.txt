@@ -266,6 +266,9 @@ Authenticationインタフェースの場合、Anonymousはnullになる
     ・キャッシュの実装を切り替えて有効期限切れのログをキャプチャしてassertしてみる
     ・ユーザ付随から情報をとれるか確認
     ・Clientからのテスト（loginUserAttributesはPostgresが起動するようにする）←★上は終わっていて後はこれだけ！ここから始める！
+    
+    ★：ユーザを追加したら、ユーザ拡張属性も追加しないとログインできなくなる！
+        →なので、RemoteAdminConsoleService#addUserされたらイベントを飛ばして、-fwでListenして拡張属性を追加する処理を追加するか
 
 ・BusinessDateを作ってもいいかも←業務日付のだな
 ・エラーレスポンスがRFCで標準化されていた！ので標準化する
