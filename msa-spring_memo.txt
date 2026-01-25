@@ -246,6 +246,11 @@ Authenticationインタフェースの場合、Anonymousはnullになる
   が取得できないエッジケースに限定される。なので、AuthenticationExceptionをハンドルすることがない訳ではないが、かなりそのケースは
   かなりレアとなる
 
+■ Filterで誰にもハンドルされない例外
+・最終的にはTomcat(アプリケーションサーバー)まで例外が戻され、web.xmlのerror-page属性に従い、エラーページにforwardされる
+・web.xmlのerror-page属性が定義されていない場合は、デフォルトで/errorページにforwardされ、該当ページないのでクライアントに変えるエラーが404になる
+・なので、RESTの場合はきちんと自分でハンドルして明示的にエラーレスポンスを返すことが必要
+
 ■ ServiceConnectionを使った複数接続先
 ・@ServiceConnectionを使って(JdbcConnectionDetailsなど)同じ種類の接続先を複数同時に使うことはできない
 ・ServiceConnectionを使った接続先設定はAutoConfigurationで解決されるが、AutoConfigurationは簡易設定のため、
@@ -255,6 +260,9 @@ Authenticationインタフェースの場合、Anonymousはnullになる
 ・ServiceConnectionもこれと同じように接続先を表すConnectionDetailsの型が同じインスタンスが複数ある場合、
   どっちを使うか決定できなくなる。
 ・よって、ServiceConnectionもAutoConfigurationと同じように複数の接続先を同時に扱うことはできない
+
+
+・Filterでエラーが出た時のハンドリングを確認する→今はerrorページに行っちゃってる
 
 ---
 今後のTODO
