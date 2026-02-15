@@ -14,6 +14,8 @@
         - 逆にいうと、自分の好みの設定で構成したBeanを他人につかってもらって、1部分だけ変えたいといわれたどうします？
         - そこで登場するのがCustomizerですが。ですので、FWとか共通部品作っている人はCustomizerが必要となりますが、アプリが作ることはない。なんだけど、それがなんなのかの理解は必要で重要。
         
+・さらに便利になったHttpInterface
+・Maven4!
 
 ・GoogleCloudに送ってみる
     Telemetry API がリリースされたので OTLP で Google Cloud にスパンを送ってみた
@@ -262,7 +264,6 @@ Authenticationインタフェースの場合、Anonymousはnullになる
 ・よって、ServiceConnectionもAutoConfigurationと同じように複数の接続先を同時に扱うことはできない
 
 
-・Filterでエラーが出た時のハンドリングを確認する→今はerrorページに行っちゃってる
 
 ---
 今後のTODO
@@ -273,16 +274,28 @@ Authenticationインタフェースの場合、Anonymousはnullになる
 ・テスト。
     ・キャッシュの実装を切り替えて有効期限切れのログをキャプチャしてassertしてみる
     ・ユーザ付随から情報をとれるか確認
-    ・Clientからのテスト（loginUserAttributesはPostgresが起動するようにする）←★上は終わっていて後はこれだけ！ここから始める！
+    ・Clientからのテスト（loginUserAttributesはPostgresが起動するようにする）
     
-    ★：ユーザを追加したら、ユーザ拡張属性も追加しないとログインできなくなる！
-        →なので、RemoteAdminConsoleService#addUserされたらイベントを飛ばして、-fwでListenして拡張属性を追加する処理を追加するか
+    ユーザを追加したら、ユーザ拡張属性も追加しないとログインできなくなる！
+        →なので、RemoteAdminConsoleService#addUserされたらイベントを飛ばして、-fwでListenして拡張属性を追加する処理を追加する
+        ↑はできて、ui-console-remoteからapplicationを直接起動してのテストはできたので、
+        ★-remoteのcompose.yml設定も含めすべてコンテナからテストできるようにする
+        ★★PrimaryのObjectMapperにLocalDateとかのdeserializerとか設定しているのにコンテナからだと効かない？（JDK違い？
+            → 暫定的に強引にPrimaryObjectMapeerを作ったらコンテナでもdeserializerが効くようになったけど、
+        (redisの接続先情報をRMS_LOGIN_USER_ATTRIBUTES_CACHE_REDISの下にもってきてそこを使うようにする)
+        
+        
 
 ・BusinessDateを作ってもいいかも←業務日付のだな
+    → キャンセルは3営業日前はムリといったキャンセルポリシークラスを作ろう
+・Datasource MicrometerでSpring BootアプリのJDBC操作を計測する - IK.AM
+    https://ik.am/entries/894
+
 ・エラーレスポンスがRFCで標準化されていた！ので標準化する
 ・DBの共通項目の設定
     Stop manually setting the time! JPA handles it all with a single annotation! | by Umesh Kumar Yadav | Nov, 2025 | Stackademic
     https://medium.com/stackademic/stop-manually-setting-the-time-jpa-handles-it-all-with-a-single-annotation-5b4df8728d19
+
 
 ー＞次バージョンに向けてにして、↑までで一旦のゴールにしよう
 ・Spring Boot4移行
@@ -332,6 +345,12 @@ Authenticationインタフェースの場合、Anonymousはnullになる
 
 ・Cucumber・Gherkin・Playwright or APiテストとかを考えてみる
 
+・負荷テストを手軽にできるツール「k6」を試してみた
+    https://zenn.dev/rescuenow/articles/8349deb470470e
+
+・Postman使ってみるのいいかも
+
+
 ===> Done
 ・ObjectMapperの一元化
     OK- Redisに書き込むときのユーザ付随のデ/シリアライズに利用するMapper
@@ -349,6 +368,8 @@ Authenticationインタフェースの場合、Anonymousはnullになる
             → @Primaryとは別に作用するCustomizerを作りたい場合は継承関係のない別物のインターフェースを用意する
             → PrimaryObjectMapperConfig
             → ここから作られたObjectMapperが@Primaryになっている
+            → 同じ型のBeanを複数作る場合、primaryはAutoConfigurationに任せてとかではなく、両方を明示的自分でつ
+               くらないとConditionalOnMissingBeanで@PrimaryのBean生成がスキップされてしまうので注意
     ---
     OK- RESTクライアントの正常レスポンスのbodyのデシリアライズに利用するMapper
         ConfigMessageConveterBuilder
